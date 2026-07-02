@@ -558,6 +558,12 @@
       "descripcion": "jarra de limonada a elección + degustación de focaccia (para compartir)",
       "precio": 37200,
       "disponible": "si"
+    },
+    {
+      "nombre": "Agrandá a tazón (extra)",
+      "descripcion": "no es una promo de la grilla: alimenta el cartel \"agrandá tus promos a tazón por $...\"",
+      "precio": 1500,
+      "disponible": "si"
     }
   ]
 }

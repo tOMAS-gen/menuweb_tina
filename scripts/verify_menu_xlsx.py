@@ -51,7 +51,8 @@ def main():
 
     promos = wb["Promos"]
     nombres_promos = [row[0].value for row in promos.iter_rows(min_row=2)]
-    assert len(nombres_promos) == 13, f"Se esperaban 13 promos, hay {len(nombres_promos)}"
+    assert len(nombres_promos) == 14, f"Se esperaban 14 filas en Promos (13 promos + tazón extra), hay {len(nombres_promos)}"
+    assert "Agrandá a tazón (extra)" in nombres_promos, "Falta la fila del tazón extra en Promos"
 
     print("OK: menu.xlsx tiene las 13 hojas, encabezados y valores esperados.")
 

@@ -19,6 +19,8 @@ const SECTORES = [
   { id: 'promos', hoja: 'Promos', kind: 'promo' },
 ];
 
+const NOMBRE_TAZON_EXTRA = 'Agrandá a tazón (extra)';
+
 function formatPrecio(n) {
   return '$' + Number(n).toLocaleString('es-AR');
 }
@@ -95,7 +97,7 @@ function renderPastryRows(items) {
 }
 
 function renderPromoRows(items) {
-  return items.map(it => {
+  return items.filter(it => it.nombre !== NOMBRE_TAZON_EXTRA).map(it => {
     const compartir = /\(para compartir\)\s*$/i.test(it.descripcion || '');
     const desc = compartir ? it.descripcion.replace(/\s*\(para compartir\)\s*$/i, '') : (it.descripcion || '');
     const card = `
@@ -110,6 +112,13 @@ function renderPromoRows(items) {
   }).join('');
 }
 
+function renderTazonExtra(items) {
+  const el = document.getElementById('promo-tazon-extra');
+  if (!el) return;
+  const item = items.find(it => it.nombre === NOMBRE_TAZON_EXTRA);
+  if (item && item.precio != null) el.textContent = formatPrecio(item.precio);
+}
+
 const RENDERERS = { size: renderSizeRows, row: renderMenuRows, pastry: renderPastryRows, promo: renderPromoRows };
 
 function renderSector(id, kind, itemsRaw) {
@@ -117,6 +126,7 @@ function renderSector(id, kind, itemsRaw) {
   if (!container) return;
   const items = itemsRaw.map(normalizarItem).filter(it => it.nombre);
   container.innerHTML = RENDERERS[kind](items);
+  if (kind === 'promo') renderTazonExtra(items);
 }
 
 function renderDesdeWorkbook(workbook) {

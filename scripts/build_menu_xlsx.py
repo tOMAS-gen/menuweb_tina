@@ -165,8 +165,11 @@ SECTORES = {
         {"nombre": "Trío Macarons", "descripcion": "Té en hebras / Infusión cafetería + jugo + trío de macarons", "precio": 12800},
         {"nombre": "Tina", "descripcion": "Tetera té en hebras + 2 porciones budín + 2 scones + madeleine + financieros + 2 jugos (para compartir)", "precio": 17400},
         {"nombre": "Degustación", "descripcion": "jarra de limonada a elección + degustación de focaccia (para compartir)", "precio": 37200},
+        {"nombre": "Agrandá a tazón (extra)", "descripcion": "no es una promo de la grilla: alimenta el cartel \"agrandá tus promos a tazón por $...\"", "precio": 1500},
     ],
 }
+
+NOMBRE_TAZON_EXTRA = "Agrandá a tazón (extra)"
 
 
 def build_workbook():
