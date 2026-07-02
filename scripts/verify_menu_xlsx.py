@@ -7,7 +7,7 @@ import os
 import openpyxl
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-HEADERS_ROW = ["nombre", "descripcion", "disponible", "precio", "precio_2", "imagen"]
+HEADERS_ROW = ["nombre", "descripcion", "disponible", "compartir", "precio", "precio_2", "imagen"]
 HEADERS_CAFE = ["nombre", "disponible", "precio_s", "precio_m", "precio_l", "precio_xl"]
 
 EXPECTED_SHEETS = [
@@ -40,26 +40,31 @@ def main():
         assert ws.max_row >= 2, f"La hoja '{hoja}' no tiene filas de datos"
 
     bebidas = wb["Bebidas"]
-    filas = list(bebidas.iter_rows(min_row=2, values_only=True))
+    filas = list(bebidas.iter_rows(min_row=2, max_col=len(HEADERS_ROW), values_only=True))
     jugo = next(f for f in filas if f[0] == "Jugo natural de naranja")
-    assert jugo[3] == 6000 and jugo[4] == 7600, jugo
+    assert jugo[4] == 6000 and jugo[5] == 7600, jugo
 
     moderna = wb["Pastelería Moderna"]
-    fila2 = [c.value for c in next(moderna.iter_rows(min_row=2, max_row=2))]
+    fila2 = [c.value for c in next(moderna.iter_rows(min_row=2, max_row=2, max_col=len(HEADERS_ROW)))]
     assert fila2[0] == "Hawaiana", fila2
-    assert fila2[5] == "torta-hawaiana.png", fila2
+    assert fila2[6] == "torta-hawaiana.png", fila2
 
     promos = wb["Promos"]
-    nombres_promos = [row[0].value for row in promos.iter_rows(min_row=2, min_col=1, max_col=1) if row[0].value]
+    filas_promos = list(promos.iter_rows(min_row=2, max_col=len(HEADERS_ROW), values_only=True))
+    filas_promos = [f for f in filas_promos if f[0]]
+    nombres_promos = [f[0] for f in filas_promos]
     assert len(nombres_promos) == 13, f"Se esperaban 13 promos, hay {len(nombres_promos)}"
     assert "Agrandá a tazón (extra)" not in nombres_promos, "La constante del tazón extra no debe estar mezclada en la tabla de promos"
 
-    assert promos["H1"].value == "nombre_constante" and promos["I1"].value == "precio_constante", (
-        promos["H1"].value, promos["I1"].value,
-    )
-    assert promos["H2"].value == "Agrandá a tazón (extra)" and promos["I2"].value == 1500, (
-        promos["H2"].value, promos["I2"].value,
-    )
+    comparten = {f[0] for f in filas_promos if f[3] == "si"}
+    assert comparten == {"Tina", "Degustación"}, f"Se esperaba compartir=si sólo en Tina y Degustación, se encontró: {comparten}"
+
+    header_completo = [c.value for c in next(promos.iter_rows(min_row=1, max_row=1))]
+    idx_nombre_k = header_completo.index("nombre_constante")
+    idx_precio_k = header_completo.index("precio_constante")
+    fila_constante = [c.value for c in next(promos.iter_rows(min_row=2, max_row=2))]
+    assert fila_constante[idx_nombre_k] == "Agrandá a tazón (extra)", fila_constante
+    assert fila_constante[idx_precio_k] == 1500, fila_constante
 
     print("OK: menu.xlsx tiene las 13 hojas, encabezados y valores esperados.")
 

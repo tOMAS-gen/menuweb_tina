@@ -35,9 +35,10 @@ function esc(str) {
   return div.innerHTML.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 }
 
-function esDisponible(raw) {
-  const v = (raw == null ? 'si' : String(raw)).trim().toLowerCase();
-  return v !== 'no';
+function esSiONo(raw, porDefecto) {
+  if (raw == null || raw === '') return porDefecto;
+  const v = String(raw).trim().toLowerCase();
+  return v === 'si' || v === 'sí';
 }
 
 function normalizarItem(raw) {
@@ -50,7 +51,8 @@ function normalizarItem(raw) {
   return {
     nombre: str(raw.nombre),
     descripcion: str(raw.descripcion),
-    disponible: esDisponible(raw.disponible),
+    disponible: esSiONo(raw.disponible, true),
+    compartir: esSiONo(raw.compartir, false),
     precio: num(raw.precio),
     precio_2: num(raw.precio_2),
     precio_s: num(raw.precio_s),
@@ -102,15 +104,13 @@ function renderPastryRows(items) {
 
 function renderPromoRows(items) {
   return items.map(it => {
-    const compartir = /\(para compartir\)\s*$/i.test(it.descripcion || '');
-    const desc = compartir ? it.descripcion.replace(/\s*\(para compartir\)\s*$/i, '') : (it.descripcion || '');
     const card = `
       <article class="promo-card${it.disponible ? '' : ' agotado'}">
-        <div><h3>${esc(it.nombre)}</h3><p>${esc(desc)}</p></div>
+        <div><h3>${esc(it.nombre)}</h3><p>${esc(it.descripcion || '')}</p></div>
         <strong>${it.precio != null ? formatPrecio(it.precio) : ''}</strong>
         ${it.disponible ? '' : agotadoLabel()}
       </article>`;
-    return compartir
+    return it.compartir
       ? `<div class="promo-share"><div class="promo-tag">para compartir</div>${card}</div>`
       : card;
   }).join('');

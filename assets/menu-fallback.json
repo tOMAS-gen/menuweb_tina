@@ -70,68 +70,81 @@
       "nombre": "Capuccino",
       "descripcion": "Clásico / Frambuesa",
       "precio": 6400,
-      "disponible": "si"
+      "disponible": "si",
+      "compartir": "no"
     },
     {
       "nombre": "Café Moccha Vienés",
       "precio": 6400,
-      "disponible": "si"
+      "disponible": "si",
+      "compartir": "no"
     },
     {
       "nombre": "Caramel Macchiato",
       "precio": 6400,
-      "disponible": "si"
+      "disponible": "si",
+      "compartir": "no"
     },
     {
       "nombre": "Macchiato Avellanas",
       "precio": 6400,
-      "disponible": "si"
+      "disponible": "si",
+      "compartir": "no"
     },
     {
       "nombre": "Café Irlandés",
       "precio": 6400,
-      "disponible": "si"
+      "disponible": "si",
+      "compartir": "no"
     },
     {
       "nombre": "Latte Vainilla",
       "precio": 6400,
-      "disponible": "si"
+      "disponible": "si",
+      "compartir": "no"
     },
     {
       "nombre": "Affogato",
       "precio": 6400,
-      "disponible": "si"
+      "disponible": "si",
+      "compartir": "no"
     },
     {
       "nombre": "Iced Coffee",
       "descripcion": "Pistacho / Coco",
       "precio": 6400,
-      "disponible": "si"
+      "disponible": "si",
+      "compartir": "no"
     },
     {
       "nombre": "Café Tina",
       "precio": 6400,
-      "disponible": "si"
+      "disponible": "si",
+      "compartir": "no"
     },
     {
       "nombre": "Café Bombón",
       "precio": 6400,
-      "disponible": "si"
+      "disponible": "si",
+      "compartir": "no"
     },
     {
       "nombre": "Café caribeño",
       "precio": 6400,
-      "disponible": "si"
+      "disponible": "si",
+      "compartir": "no"
     },
     {
       "nombre": "Submarino",
       "precio": 6400,
-      "disponible": "si"
+      "disponible": "si",
+      "compartir": "no"
     },
     {
       "nombre": "Bayleis",
       "precio": 6400,
-      "disponible": "si"
+      "disponible": "si",
+      "compartir": "no"
     }
   ],
   "Materos": [
@@ -139,158 +152,186 @@
       "nombre": "Jaguar / Pampa / Paradise",
       "descripcion": "mate + blend yerba a elección + termo 80°",
       "precio": 4600,
-      "disponible": "si"
+      "disponible": "si",
+      "compartir": "no"
     },
     {
       "nombre": "Opción Tereré",
       "descripcion": "mate + blend yerba a elección + termo 80°",
       "precio": 4900,
-      "disponible": "si"
+      "disponible": "si",
+      "compartir": "no"
     }
   ],
   "Frozzen": [
     {
       "nombre": "Banana con dulce de leche",
       "precio": 6600,
-      "disponible": "si"
+      "disponible": "si",
+      "compartir": "no"
     },
     {
       "nombre": "Arándanos",
       "precio": 6600,
-      "disponible": "si"
+      "disponible": "si",
+      "compartir": "no"
     },
     {
       "nombre": "Frutos rojos",
       "precio": 6600,
-      "disponible": "si"
+      "disponible": "si",
+      "compartir": "no"
     },
     {
       "nombre": "Frutillas con crema",
       "precio": 6600,
-      "disponible": "si"
+      "disponible": "si",
+      "compartir": "no"
     },
     {
       "nombre": "Mousse de limón",
       "precio": 6600,
-      "disponible": "si"
+      "disponible": "si",
+      "compartir": "no"
     }
   ],
   "Té en Hebras": [
     {
       "nombre": "Tetera para compartir",
       "precio": 6000,
-      "disponible": "si"
+      "disponible": "si",
+      "compartir": "no"
     },
     {
       "nombre": "Tetera individual",
       "precio": 3300,
-      "disponible": "si"
+      "disponible": "si",
+      "compartir": "no"
     },
     {
       "nombre": "Té / Yerbeado",
       "precio": 3300,
-      "disponible": "si"
+      "disponible": "si",
+      "compartir": "no"
     },
     {
       "nombre": "Matcha latte",
       "descripcion": "té verde en polvo con leche",
       "precio": 6400,
-      "disponible": "si"
+      "disponible": "si",
+      "compartir": "no"
     }
   ],
   "Frapucchino": [
     {
       "nombre": "Café bombón",
       "precio": 6600,
-      "disponible": "si"
+      "disponible": "si",
+      "compartir": "no"
     },
     {
       "nombre": "Mocha Vainilla Latte",
       "precio": 6600,
-      "disponible": "si"
+      "disponible": "si",
+      "compartir": "no"
     },
     {
       "nombre": "Caramel Avellanas",
       "precio": 6600,
-      "disponible": "si"
+      "disponible": "si",
+      "compartir": "no"
     },
     {
       "nombre": "Frambuesa",
       "precio": 6600,
-      "disponible": "si"
+      "disponible": "si",
+      "compartir": "no"
     }
   ],
   "Bebidas": [
     {
       "nombre": "Agua / Agua Saborizada",
       "precio": 4100,
-      "disponible": "si"
+      "disponible": "si",
+      "compartir": "no"
     },
     {
       "nombre": "Gaseosas",
       "descripcion": "Línea Pepsi",
       "precio": 4100,
-      "disponible": "si"
+      "disponible": "si",
+      "compartir": "no"
     },
     {
       "nombre": "Jugo natural de naranja",
       "precio": 6000,
       "precio_2": 7600,
-      "disponible": "si"
+      "disponible": "si",
+      "compartir": "no"
     },
     {
       "nombre": "Pomelada",
       "precio": 8700,
-      "disponible": "si"
+      "disponible": "si",
+      "compartir": "no"
     },
     {
       "nombre": "Limonada",
       "descripcion": "Clásica / Menta jengibre / Arándanos / Maracuyá / Cereza",
       "precio": 8700,
       "precio_2": 9600,
-      "disponible": "si"
+      "disponible": "si",
+      "compartir": "no"
     }
   ],
   "Pastelería Propia": [
     {
       "nombre": "Brownie con frutos rojos",
       "precio": 7100,
-      "disponible": "si"
+      "disponible": "si",
+      "compartir": "no"
     },
     {
       "nombre": "Crumble",
       "precio": 7100,
-      "disponible": "si"
+      "disponible": "si",
+      "compartir": "no"
     },
     {
       "nombre": "Cheesecake",
       "precio": 7100,
-      "disponible": "si"
+      "disponible": "si",
+      "compartir": "no"
     },
     {
       "nombre": "Balcarce",
       "precio": 7100,
-      "disponible": "si"
+      "disponible": "si",
+      "compartir": "no"
     },
     {
       "nombre": "Selva Negra",
       "precio": 7100,
-      "disponible": "si"
+      "disponible": "si",
+      "compartir": "no"
     },
     {
       "nombre": "Lemon Pie",
       "precio": 7100,
-      "disponible": "si"
+      "disponible": "si",
+      "compartir": "no"
     },
     {
       "nombre": "Limón Cocado",
       "precio": 7100,
-      "disponible": "si"
+      "disponible": "si",
+      "compartir": "no"
     },
     {
       "nombre": "Tiramisú",
       "precio": 7100,
-      "disponible": "si"
+      "disponible": "si",
+      "compartir": "no"
     }
   ],
   "Antojos": [
@@ -298,78 +339,92 @@
       "nombre": "Alfajores Premium",
       "descripcion": "Pistacho / Red Velvet / Chocotorta",
       "precio": 6600,
-      "disponible": "si"
+      "disponible": "si",
+      "compartir": "no"
     },
     {
       "nombre": "Alfajor Maicena / Miel",
       "precio": 4200,
-      "disponible": "si"
+      "disponible": "si",
+      "compartir": "no"
     },
     {
       "nombre": "Financieros",
       "descripcion": "4 unidades",
       "precio": 2800,
-      "disponible": "si"
+      "disponible": "si",
+      "compartir": "no"
     },
     {
       "nombre": "Madeleine",
       "descripcion": "3 unidades",
       "precio": 2800,
-      "disponible": "si"
+      "disponible": "si",
+      "compartir": "no"
     },
     {
       "nombre": "Cookies",
       "precio": 2800,
-      "disponible": "si"
+      "disponible": "si",
+      "compartir": "no"
     },
     {
       "nombre": "Macarons",
       "precio": 7000,
-      "disponible": "si"
+      "disponible": "si",
+      "compartir": "no"
     },
     {
       "nombre": "Budín",
       "precio": 3500,
-      "disponible": "si"
+      "disponible": "si",
+      "compartir": "no"
     },
     {
       "nombre": "Scones",
       "descripcion": "3 unidades",
       "precio": 3600,
-      "disponible": "si"
+      "disponible": "si",
+      "compartir": "no"
     },
     {
       "nombre": "Tortita",
       "precio": 850,
-      "disponible": "si"
+      "disponible": "si",
+      "compartir": "no"
     },
     {
       "nombre": "Tostado jamón y queso",
       "precio": 9200,
-      "disponible": "si"
+      "disponible": "si",
+      "compartir": "no"
     },
     {
       "nombre": "Medialuna",
       "descripcion": "opc. jamón y queso",
       "precio": 1400,
       "precio_2": 3300,
-      "disponible": "si"
+      "disponible": "si",
+      "compartir": "no"
     },
     {
       "nombre": "Tostón con omelette",
       "precio": 9200,
-      "disponible": "si"
+      "disponible": "si",
+      "compartir": "no"
     },
     {
       "nombre": "Bruschetta Tina",
       "precio": 9200,
-      "disponible": "si"
+      "disponible": "si",
+      "compartir": "no"
     },
     {
       "nombre": "Galletas Bretón",
       "descripcion": "3 unidades",
       "precio": 2100,
-      "disponible": "si"
+      "disponible": "si",
+      "compartir": "no"
     }
   ],
   "Focaccias Rellenas": [
@@ -377,37 +432,43 @@
       "nombre": "Serrano",
       "descripcion": "rúcula, jamón crudo y nueces",
       "precio": 10800,
-      "disponible": "si"
+      "disponible": "si",
+      "compartir": "no"
     },
     {
       "nombre": "Azul",
       "descripcion": "queso untable, queso roquefort y tomate hidratado",
       "precio": 10800,
-      "disponible": "si"
+      "disponible": "si",
+      "compartir": "no"
     },
     {
       "nombre": "Gourmet",
       "descripcion": "peras, queso azul, rúcula, nueces y miel",
       "precio": 10800,
-      "disponible": "si"
+      "disponible": "si",
+      "compartir": "no"
     },
     {
       "nombre": "Capresse",
       "descripcion": "tomate, queso y albahaca",
       "precio": 10800,
-      "disponible": "si"
+      "disponible": "si",
+      "compartir": "no"
     },
     {
       "nombre": "Tradicional",
       "descripcion": "jamón, queso, lechuga y tomate",
       "precio": 10800,
-      "disponible": "si"
+      "disponible": "si",
+      "compartir": "no"
     },
     {
       "nombre": "Fugazza",
       "descripcion": "queso y cebolla caramelizada",
       "precio": 10800,
-      "disponible": "si"
+      "disponible": "si",
+      "compartir": "no"
     }
   ],
   "Pastelería Moderna": [
@@ -416,42 +477,48 @@
       "descripcion": "mousse de coco y corazón de ananá",
       "precio": 7500,
       "imagen": "torta-hawaiana.png",
-      "disponible": "si"
+      "disponible": "si",
+      "compartir": "no"
     },
     {
       "nombre": "Agus Tina",
       "descripcion": "mousse de chocolate, centro de naranja, terciopelo de chocolate",
       "precio": 7500,
       "imagen": "torta-agus-tina.png",
-      "disponible": "si"
+      "disponible": "si",
+      "compartir": "no"
     },
     {
       "nombre": "Valen Tina",
       "descripcion": "profiterol relleno de cheesecake de pistacho, centro de praline de pistacho",
       "precio": 7500,
       "imagen": "torta-valen-tina.png",
-      "disponible": "si"
+      "disponible": "si",
+      "compartir": "no"
     },
     {
       "nombre": "Capricho",
       "descripcion": "cremoso de chocolate, centro de maracuyá y frambuesa, terciopelo de chocolate blanco",
       "precio": 7500,
       "imagen": "torta-capricho.png",
-      "disponible": "si"
+      "disponible": "si",
+      "compartir": "no"
     },
     {
       "nombre": "Brownie boom",
       "descripcion": "húmedo de chocolate, pasta de maní y dulce de leche, bañado en chocolate y crocante de maní",
       "precio": 7500,
       "imagen": "torta-brownie-boom.png",
-      "disponible": "si"
+      "disponible": "si",
+      "compartir": "no"
     },
     {
       "nombre": "Banofee",
       "descripcion": "base de chocolate, ganache de maní, bananas caramelizadas, salsa toffee y mousse de chocolate",
       "precio": 7500,
       "imagen": "torta-banofee.png",
-      "disponible": "si"
+      "disponible": "si",
+      "compartir": "no"
     }
   ],
   "Desayunos": [
@@ -459,25 +526,29 @@
       "nombre": "Americano",
       "descripcion": "Cafetería + jugo exprimido + pan de campo con palta y huevo",
       "precio": 14400,
-      "disponible": "si"
+      "disponible": "si",
+      "compartir": "no"
     },
     {
       "nombre": "Tentación",
       "descripcion": "Café con leche + jugo exprimido + opción de pastelería",
       "precio": 13800,
-      "disponible": "si"
+      "disponible": "si",
+      "compartir": "no"
     },
     {
       "nombre": "Criollo",
       "descripcion": "Cafetería + jugo exprimido + tostadas con queso, manteca o dulce",
       "precio": 10800,
-      "disponible": "si"
+      "disponible": "si",
+      "compartir": "no"
     },
     {
       "nombre": "Alfajor",
       "descripcion": "Cafetería + jugo exprimido + alfajor",
       "precio": 10700,
-      "disponible": "si"
+      "disponible": "si",
+      "compartir": "no"
     }
   ],
   "Promos": [
@@ -485,77 +556,90 @@
       "nombre": "Clásico",
       "descripcion": "Infusión cafetería + 2 medialunas o tostadas + jugo",
       "precio": 7800,
-      "disponible": "si"
+      "disponible": "si",
+      "compartir": "no"
     },
     {
       "nombre": "Minis",
       "descripcion": "Chocolatada / Jugo mediano + cookies / sandwich",
       "precio": 9000,
-      "disponible": "si"
+      "disponible": "si",
+      "compartir": "no"
     },
     {
       "nombre": "Criollo",
       "descripcion": "Infusión cafetería + tostada con manteca o queso y dulce + jugo",
       "precio": 8300,
-      "disponible": "si"
+      "disponible": "si",
+      "compartir": "no"
     },
     {
       "nombre": "Alfajor",
       "descripcion": "Infusión cafetería + alfajor a elección + jugo",
       "precio": 8000,
-      "disponible": "si"
+      "disponible": "si",
+      "compartir": "no"
     },
     {
       "nombre": "Tentación",
       "descripcion": "Café especial + porción de torta + jugo",
       "precio": 14500,
-      "disponible": "si"
+      "disponible": "si",
+      "compartir": "no"
     },
     {
       "nombre": "Saludable",
       "descripcion": "Infusión cafetería + yogurt con granola + frutillas y arándanos + jugo",
       "precio": 13800,
-      "disponible": "si"
+      "disponible": "si",
+      "compartir": "no"
     },
     {
       "nombre": "Americano",
       "descripcion": "Infusión cafetería + tostada con huevo y palta + jugo",
       "precio": 12800,
-      "disponible": "si"
+      "disponible": "si",
+      "compartir": "no"
     },
     {
       "nombre": "Stella",
       "descripcion": "Cerveza + focaccia a elección",
       "precio": 16000,
-      "disponible": "si"
+      "disponible": "si",
+      "compartir": "no"
     },
     {
       "nombre": "Carlitos",
       "descripcion": "Infusión cafetería + tostada con jamón y queso + jugo",
       "precio": 16600,
-      "disponible": "si"
+      "disponible": "si",
+      "compartir": "no"
     },
     {
       "nombre": "Gran Americano",
       "descripcion": "Infusión cafetería + jamón, queso y huevo + mix de frutas + tostadas + jugo",
       "precio": 17400,
-      "disponible": "si"
+      "disponible": "si",
+      "compartir": "no"
     },
     {
       "nombre": "Trío Macarons",
       "descripcion": "Té en hebras / Infusión cafetería + jugo + trío de macarons",
       "precio": 12800,
-      "disponible": "si"
+      "disponible": "si",
+      "compartir": "no"
     },
     {
       "nombre": "Tina",
-      "descripcion": "Tetera té en hebras + 2 porciones budín + 2 scones + madeleine + financieros + 2 jugos (para compartir)",
+      "descripcion": "Tetera té en hebras + 2 porciones budín + 2 scones + madeleine + financieros + 2 jugos",
+      "compartir": "si",
       "precio": 17400,
       "disponible": "si"
     },
     {
       "nombre": "Degustación",
-      "descripcion": "jarra de limonada a elección + degustación de focaccia (para compartir)",
+      "descripcion": "jarra de limonada a elección + degustación de focaccia",
+      "compartir": "si",
       "precio": 37200,
       "disponible": "si"
     }

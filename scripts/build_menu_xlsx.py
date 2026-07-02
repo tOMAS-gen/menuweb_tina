@@ -7,18 +7,25 @@ import json
 import os
 
 import openpyxl
-from openpyxl.styles import Alignment, Font, PatternFill
+from openpyxl.styles import Alignment, Border, Font, PatternFill, Side
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-HEADERS_ROW = ["nombre", "descripcion", "disponible", "precio", "precio_2", "imagen"]
+HEADERS_ROW = ["nombre", "descripcion", "disponible", "compartir", "precio", "precio_2", "imagen"]
 HEADERS_CAFE = ["nombre", "disponible", "precio_s", "precio_m", "precio_l", "precio_xl"]
 
+# Columnas sí/no: si el ítem no trae el valor, se completa con este default
+# en vez de quedar en blanco (así "compartir" y "disponible" siempre están
+# explícitos, nunca ambiguos).
+BOOL_DEFAULTS = {"disponible": "si", "compartir": "no"}
+
 PRECIO_COLS = {"precio", "precio_2", "precio_s", "precio_m", "precio_l", "precio_xl"}
+BOOL_COLS = {"disponible", "compartir"}
 COLUMN_WIDTHS = {
     "nombre": 32,
     "descripcion": 40,
     "disponible": 12,
+    "compartir": 12,
     "precio": 13,
     "precio_2": 13,
     "precio_s": 11,
@@ -30,9 +37,11 @@ COLUMN_WIDTHS = {
 MONEDA_FORMAT = '"$"#,##0'
 HEADER_FILL = PatternFill(start_color="614E4C", end_color="614E4C", fill_type="solid")
 HEADER_FONT = Font(color="FFFBF4", bold=True)
+GRID_BORDER = Border(*(Side(style="thin", color="D9D2C7"),) * 4)
 
 
 def style_sheet(ws, headers):
+    ultima_fila = ws.max_row
     for col_idx, col_name in enumerate(headers, start=1):
         letter = ws.cell(row=1, column=col_idx).column_letter
         ws.column_dimensions[letter].width = COLUMN_WIDTHS[col_name]
@@ -40,9 +49,14 @@ def style_sheet(ws, headers):
         header_cell.fill = HEADER_FILL
         header_cell.font = HEADER_FONT
         header_cell.alignment = Alignment(horizontal="center", vertical="center")
-        if col_name in PRECIO_COLS:
-            for row in ws.iter_rows(min_row=2, min_col=col_idx, max_col=col_idx):
-                row[0].number_format = MONEDA_FORMAT
+        header_cell.border = GRID_BORDER
+        for row in ws.iter_rows(min_row=2, max_row=ultima_fila, min_col=col_idx, max_col=col_idx):
+            cell = row[0]
+            cell.border = GRID_BORDER
+            if col_name in PRECIO_COLS:
+                cell.number_format = MONEDA_FORMAT
+            if col_name in BOOL_COLS:
+                cell.alignment = Alignment(horizontal="center")
     ws.row_dimensions[1].height = 22
     ws.freeze_panes = "A2"
 
@@ -60,10 +74,13 @@ def add_constante_block(ws, tabla_headers, constante):
         cell.fill = HEADER_FILL
         cell.font = HEADER_FONT
         cell.alignment = Alignment(horizontal="center", vertical="center")
+        cell.border = GRID_BORDER
 
-    ws.cell(row=2, column=col_nombre, value=constante["nombre"])
+    nombre_cell = ws.cell(row=2, column=col_nombre, value=constante["nombre"])
     precio_cell = ws.cell(row=2, column=col_precio, value=constante["precio"])
     precio_cell.number_format = MONEDA_FORMAT
+    nombre_cell.border = GRID_BORDER
+    precio_cell.border = GRID_BORDER
 
     ws.column_dimensions[header_nombre.column_letter].width = 30
     ws.column_dimensions[header_precio.column_letter].width = 14
@@ -185,8 +202,8 @@ SECTORES = {
         {"nombre": "Carlitos", "descripcion": "Infusión cafetería + tostada con jamón y queso + jugo", "precio": 16600},
         {"nombre": "Gran Americano", "descripcion": "Infusión cafetería + jamón, queso y huevo + mix de frutas + tostadas + jugo", "precio": 17400},
         {"nombre": "Trío Macarons", "descripcion": "Té en hebras / Infusión cafetería + jugo + trío de macarons", "precio": 12800},
-        {"nombre": "Tina", "descripcion": "Tetera té en hebras + 2 porciones budín + 2 scones + madeleine + financieros + 2 jugos (para compartir)", "precio": 17400},
-        {"nombre": "Degustación", "descripcion": "jarra de limonada a elección + degustación de focaccia (para compartir)", "precio": 37200},
+        {"nombre": "Tina", "descripcion": "Tetera té en hebras + 2 porciones budín + 2 scones + madeleine + financieros + 2 jugos", "compartir": "si", "precio": 17400},
+        {"nombre": "Degustación", "descripcion": "jarra de limonada a elección + degustación de focaccia", "compartir": "si", "precio": 37200},
     ],
 }
 
@@ -204,14 +221,14 @@ def build_workbook():
     ws = wb.create_sheet(title="Café Tradicional")
     ws.append(HEADERS_CAFE)
     for item in CAFE_TRADICIONAL:
-        ws.append([item.get(col, "si" if col == "disponible" else None) for col in HEADERS_CAFE])
+        ws.append([item.get(col, BOOL_DEFAULTS.get(col)) for col in HEADERS_CAFE])
     style_sheet(ws, HEADERS_CAFE)
 
     for hoja, items in SECTORES.items():
         ws = wb.create_sheet(title=hoja)
         ws.append(HEADERS_ROW)
         for item in items:
-            ws.append([item.get(col, "si" if col == "disponible" else None) for col in HEADERS_ROW])
+            ws.append([item.get(col, BOOL_DEFAULTS.get(col)) for col in HEADERS_ROW])
         style_sheet(ws, HEADERS_ROW)
         if hoja == "Promos":
             add_constante_block(ws, HEADERS_ROW, PROMO_TAZON_EXTRA)
@@ -219,10 +236,16 @@ def build_workbook():
     return wb
 
 
+def _con_defaults(item, defaults):
+    return dict(item, **{k: item.get(k, v) for k, v in defaults.items()})
+
+
 def build_fallback():
-    fallback = {"Café Tradicional": [dict(item, disponible=item.get("disponible", "si")) for item in CAFE_TRADICIONAL]}
+    fallback = {
+        "Café Tradicional": [_con_defaults(item, {"disponible": "si"}) for item in CAFE_TRADICIONAL],
+    }
     for hoja, items in SECTORES.items():
-        fallback[hoja] = [dict(item, disponible=item.get("disponible", "si")) for item in items]
+        fallback[hoja] = [_con_defaults(item, BOOL_DEFAULTS) for item in items]
     fallback["Promos_tazon_extra"] = dict(PROMO_TAZON_EXTRA)
     return fallback
 
