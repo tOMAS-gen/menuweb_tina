@@ -1,7 +1,13 @@
 // ═══════════════════════════════════════════════════════
 //  MENÚ — Cafetería Tina
-//  Editá menu.xlsx (una hoja por sector) y recargá la página.
+//  Editá la planilla de Google Sheets (una hoja por sector) y recargá la
+//  página. La planilla tiene que seguir compartida como "cualquiera con
+//  el enlace puede ver" para que el sitio la pueda leer sin iniciar sesión.
 // ═══════════════════════════════════════════════════════
+
+// ID de la planilla en Google Sheets (de la URL: /spreadsheets/d/<ID>/edit...).
+const GOOGLE_SHEET_ID = '1JbJnb5L7dE3Kcq6a6WUC36q9b-78H4od';
+const GOOGLE_SHEET_XLSX_URL = `https://docs.google.com/spreadsheets/d/${GOOGLE_SHEET_ID}/export?format=xlsx`;
 
 const SECTORES = [
   { id: 'cafe', hoja: 'Café Tradicional', kind: 'size' },
@@ -174,14 +180,14 @@ function renderDesdeFallback(fallback) {
 
 async function initMenu() {
   try {
-    const res = await fetch('menu.xlsx');
-    if (!res.ok) throw new Error('fetch de menu.xlsx falló: ' + res.status);
+    const res = await fetch(GOOGLE_SHEET_XLSX_URL, { cache: 'no-store' });
+    if (!res.ok) throw new Error('fetch de Google Sheets falló: ' + res.status);
     const buf = await res.arrayBuffer();
     const workbook = XLSX.read(buf, { type: 'array' });
     renderDesdeWorkbook(workbook);
     window.PRECIOS_CARGADOS = true;
   } catch (err) {
-    console.error('No se pudo leer menu.xlsx, uso el respaldo assets/menu-fallback.json.', err);
+    console.error('No se pudo leer la planilla de Google Sheets, uso el respaldo assets/menu-fallback.json.', err);
     try {
       const res = await fetch('assets/menu-fallback.json');
       const fallback = await res.json();
