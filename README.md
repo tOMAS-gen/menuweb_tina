@@ -5,7 +5,7 @@ Menú digital de **Tina — café, té y pastelería**. Página estática (HTML 
 ## Estructura
 
 ```
-menu-web-tina/
+menuweb_tina/
 ├── index.html          Página del menú (única vista)
 ├── precios.js          Precios de todos los ítems
 └── assets/
