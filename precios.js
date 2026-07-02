@@ -178,6 +178,13 @@ function renderDesdeFallback(fallback) {
   });
 }
 
+function ocultarPantallaCarga() {
+  const el = document.getElementById('loading-screen');
+  if (!el) return;
+  el.classList.add('oculto');
+  setTimeout(() => el.remove(), 500);
+}
+
 async function initMenu() {
   try {
     const res = await fetch(GOOGLE_SHEET_XLSX_URL, { cache: 'no-store' });
@@ -197,6 +204,8 @@ async function initMenu() {
       console.error('Tampoco se pudo leer el respaldo. El menú queda vacío.', err2);
       window.PRECIOS_CARGADOS = false;
     }
+  } finally {
+    ocultarPantallaCarga();
   }
 }
 

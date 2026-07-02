@@ -12,6 +12,10 @@
     @font-face{font-family:'HelveticaNowDisplay-Medium';src:local('HelveticaNowDisplay-Medium'),local('Helvetica Now Display Medium'),local('HelveticaNow-Display-Medium');font-weight:500}
     @font-face{font-family:'Helvetica Now Display';src:local('HelveticaNowDisplay-Medium'),local('Helvetica Now Display Medium'),local('Helvetica Now Display');font-weight:500}
     :root{--cream:#fffbf4;--row:#e8e3da;--brown:#614e4c;--aqua:#a4d5cc;}
+    .loading-screen{position:fixed;inset:0;background:var(--cream);display:flex;align-items:center;justify-content:center;z-index:999;transition:opacity .4s ease}
+    .loading-screen.oculto{opacity:0;pointer-events:none}
+    .loading-logo{width:min(360px,70vw);animation:loading-pulse 1.4s ease-in-out infinite}
+    @keyframes loading-pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.55;transform:scale(.96)}}
     *{box-sizing:border-box} html{scroll-behavior:smooth} body{margin:0;background:var(--cream);color:var(--brown);font-family:'Asap Condensed',Arial,sans-serif;font-weight:600;padding-top:0} img{display:block;max-width:100%}
 
     /* ── HAMBURGUESA FLOTANTE ── */
@@ -190,6 +194,11 @@
   </style>
 </head>
 <body>
+
+  <!-- Pantalla de carga: se oculta cuando termina de leer la planilla -->
+  <div class="loading-screen" id="loading-screen">
+    <img class="loading-logo" src="assets/logo/logo-menu-tina.svg" alt="Menú Tina">
+  </div>
 
   <!-- Backdrop del drawer -->
   <div class="drawer-backdrop" id="drawer-backdrop"></div>
