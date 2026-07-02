@@ -7,11 +7,44 @@ import json
 import os
 
 import openpyxl
+from openpyxl.styles import Alignment, Font, PatternFill
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 HEADERS_ROW = ["nombre", "descripcion", "disponible", "precio", "precio_2", "imagen"]
 HEADERS_CAFE = ["nombre", "disponible", "precio_s", "precio_m", "precio_l", "precio_xl"]
+
+PRECIO_COLS = {"precio", "precio_2", "precio_s", "precio_m", "precio_l", "precio_xl"}
+COLUMN_WIDTHS = {
+    "nombre": 32,
+    "descripcion": 40,
+    "disponible": 12,
+    "precio": 13,
+    "precio_2": 13,
+    "precio_s": 11,
+    "precio_m": 11,
+    "precio_l": 11,
+    "precio_xl": 11,
+    "imagen": 24,
+}
+MONEDA_FORMAT = '"$"#,##0'
+HEADER_FILL = PatternFill(start_color="614E4C", end_color="614E4C", fill_type="solid")
+HEADER_FONT = Font(color="FFFBF4", bold=True)
+
+
+def style_sheet(ws, headers):
+    for col_idx, col_name in enumerate(headers, start=1):
+        letter = ws.cell(row=1, column=col_idx).column_letter
+        ws.column_dimensions[letter].width = COLUMN_WIDTHS[col_name]
+        header_cell = ws.cell(row=1, column=col_idx)
+        header_cell.fill = HEADER_FILL
+        header_cell.font = HEADER_FONT
+        header_cell.alignment = Alignment(horizontal="center", vertical="center")
+        if col_name in PRECIO_COLS:
+            for row in ws.iter_rows(min_row=2, min_col=col_idx, max_col=col_idx):
+                row[0].number_format = MONEDA_FORMAT
+    ws.row_dimensions[1].height = 22
+    ws.freeze_panes = "A2"
 
 CAFE_TRADICIONAL = [
     {"nombre": "Expresso", "precio_s": 3300, "precio_m": 4200, "precio_l": 4800, "precio_xl": 5500},
@@ -144,12 +177,14 @@ def build_workbook():
     ws.append(HEADERS_CAFE)
     for item in CAFE_TRADICIONAL:
         ws.append([item.get(col, "si" if col == "disponible" else None) for col in HEADERS_CAFE])
+    style_sheet(ws, HEADERS_CAFE)
 
     for hoja, items in SECTORES.items():
         ws = wb.create_sheet(title=hoja)
         ws.append(HEADERS_ROW)
         for item in items:
             ws.append([item.get(col, "si" if col == "disponible" else None) for col in HEADERS_ROW])
+        style_sheet(ws, HEADERS_ROW)
 
     return wb
 
