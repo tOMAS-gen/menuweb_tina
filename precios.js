@@ -26,7 +26,7 @@ function formatPrecio(n) {
 function esc(str) {
   const div = document.createElement('div');
   div.textContent = str == null ? '' : String(str);
-  return div.innerHTML;
+  return div.innerHTML.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 }
 
 function esDisponible(raw) {
@@ -35,7 +35,11 @@ function esDisponible(raw) {
 }
 
 function normalizarItem(raw) {
-  const num = v => (v === undefined || v === null || v === '' ? null : Number(v));
+  const num = v => {
+    if (v === undefined || v === null || v === '') return null;
+    const n = Number(v);
+    return Number.isFinite(n) ? n : null;
+  };
   const str = v => (v === undefined || v === null || v === '' ? null : String(v).trim());
   return {
     nombre: str(raw.nombre),
