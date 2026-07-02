@@ -46,6 +46,28 @@ def style_sheet(ws, headers):
     ws.row_dimensions[1].height = 22
     ws.freeze_panes = "A2"
 
+
+def add_constante_block(ws, tabla_headers, constante):
+    """Escribe una constante de sólo-un-valor en columnas separadas de la
+    tabla principal por una columna en blanco, para que no se confunda con
+    una fila más de ítems."""
+    col_nombre = len(tabla_headers) + 2  # +1 = columna en blanco de separación
+    col_precio = col_nombre + 1
+
+    header_nombre = ws.cell(row=1, column=col_nombre, value="nombre_constante")
+    header_precio = ws.cell(row=1, column=col_precio, value="precio_constante")
+    for cell in (header_nombre, header_precio):
+        cell.fill = HEADER_FILL
+        cell.font = HEADER_FONT
+        cell.alignment = Alignment(horizontal="center", vertical="center")
+
+    ws.cell(row=2, column=col_nombre, value=constante["nombre"])
+    precio_cell = ws.cell(row=2, column=col_precio, value=constante["precio"])
+    precio_cell.number_format = MONEDA_FORMAT
+
+    ws.column_dimensions[header_nombre.column_letter].width = 30
+    ws.column_dimensions[header_precio.column_letter].width = 14
+
 CAFE_TRADICIONAL = [
     {"nombre": "Expresso", "precio_s": 3300, "precio_m": 4200, "precio_l": 4800, "precio_xl": 5500},
     {"nombre": "Doble Expresso", "precio_s": 3300, "precio_m": 4200, "precio_l": 4800, "precio_xl": 5500},
@@ -165,11 +187,14 @@ SECTORES = {
         {"nombre": "Trío Macarons", "descripcion": "Té en hebras / Infusión cafetería + jugo + trío de macarons", "precio": 12800},
         {"nombre": "Tina", "descripcion": "Tetera té en hebras + 2 porciones budín + 2 scones + madeleine + financieros + 2 jugos (para compartir)", "precio": 17400},
         {"nombre": "Degustación", "descripcion": "jarra de limonada a elección + degustación de focaccia (para compartir)", "precio": 37200},
-        {"nombre": "Agrandá a tazón (extra)", "descripcion": "no es una promo de la grilla: alimenta el cartel \"agrandá tus promos a tazón por $...\"", "precio": 1500},
     ],
 }
 
-NOMBRE_TAZON_EXTRA = "Agrandá a tazón (extra)"
+# No es una fila más de la tabla de promos: es una constante aparte (cartel
+# "agrandá tus promos a tazón por $..."), en columnas separadas por una
+# columna en blanco a la derecha de la tabla, para que agregar una promo
+# nueva sea siempre "agregar una fila" sin tener que esquivar nada.
+PROMO_TAZON_EXTRA = {"nombre": "Agrandá a tazón (extra)", "precio": 1500}
 
 
 def build_workbook():
@@ -188,6 +213,8 @@ def build_workbook():
         for item in items:
             ws.append([item.get(col, "si" if col == "disponible" else None) for col in HEADERS_ROW])
         style_sheet(ws, HEADERS_ROW)
+        if hoja == "Promos":
+            add_constante_block(ws, HEADERS_ROW, PROMO_TAZON_EXTRA)
 
     return wb
 
@@ -196,6 +223,7 @@ def build_fallback():
     fallback = {"Café Tradicional": [dict(item, disponible=item.get("disponible", "si")) for item in CAFE_TRADICIONAL]}
     for hoja, items in SECTORES.items():
         fallback[hoja] = [dict(item, disponible=item.get("disponible", "si")) for item in items]
+    fallback["Promos_tazon_extra"] = dict(PROMO_TAZON_EXTRA)
     return fallback
 
 

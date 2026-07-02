@@ -35,7 +35,7 @@ def main():
 
     for hoja in EXPECTED_SHEETS[1:]:
         ws = wb[hoja]
-        header_row = [cell.value for cell in next(ws.iter_rows(min_row=1, max_row=1))]
+        header_row = [c.value for c in next(ws.iter_rows(min_row=1, max_row=1, min_col=1, max_col=len(HEADERS_ROW)))]
         assert header_row == HEADERS_ROW, f"Encabezado incorrecto en '{hoja}': {header_row}"
         assert ws.max_row >= 2, f"La hoja '{hoja}' no tiene filas de datos"
 
@@ -50,9 +50,16 @@ def main():
     assert fila2[5] == "torta-hawaiana.png", fila2
 
     promos = wb["Promos"]
-    nombres_promos = [row[0].value for row in promos.iter_rows(min_row=2)]
-    assert len(nombres_promos) == 14, f"Se esperaban 14 filas en Promos (13 promos + tazón extra), hay {len(nombres_promos)}"
-    assert "Agrandá a tazón (extra)" in nombres_promos, "Falta la fila del tazón extra en Promos"
+    nombres_promos = [row[0].value for row in promos.iter_rows(min_row=2, min_col=1, max_col=1) if row[0].value]
+    assert len(nombres_promos) == 13, f"Se esperaban 13 promos, hay {len(nombres_promos)}"
+    assert "Agrandá a tazón (extra)" not in nombres_promos, "La constante del tazón extra no debe estar mezclada en la tabla de promos"
+
+    assert promos["H1"].value == "nombre_constante" and promos["I1"].value == "precio_constante", (
+        promos["H1"].value, promos["I1"].value,
+    )
+    assert promos["H2"].value == "Agrandá a tazón (extra)" and promos["I2"].value == 1500, (
+        promos["H2"].value, promos["I2"].value,
+    )
 
     print("OK: menu.xlsx tiene las 13 hojas, encabezados y valores esperados.")
 

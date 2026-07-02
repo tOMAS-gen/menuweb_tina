@@ -19,8 +19,6 @@ const SECTORES = [
   { id: 'promos', hoja: 'Promos', kind: 'promo' },
 ];
 
-const NOMBRE_TAZON_EXTRA = 'Agrandá a tazón (extra)';
-
 function formatPrecio(n) {
   return '$' + Number(n).toLocaleString('es-AR');
 }
@@ -97,7 +95,7 @@ function renderPastryRows(items) {
 }
 
 function renderPromoRows(items) {
-  return items.filter(it => it.nombre !== NOMBRE_TAZON_EXTRA).map(it => {
+  return items.map(it => {
     const compartir = /\(para compartir\)\s*$/i.test(it.descripcion || '');
     const desc = compartir ? it.descripcion.replace(/\s*\(para compartir\)\s*$/i, '') : (it.descripcion || '');
     const card = `
@@ -112,11 +110,30 @@ function renderPromoRows(items) {
   }).join('');
 }
 
-function renderTazonExtra(items) {
+// Lee la constante "nombre_constante"/"precio_constante" de la hoja Promos.
+// Vive en columnas aparte de la tabla de ítems (separadas por una columna en
+// blanco), por eso se busca por nombre de columna y no por posición fija:
+// no importa si está en la fila 2 o en cualquier otra, ni si se reordenan
+// las columnas de la tabla principal.
+function leerConstantePromos(filas2D) {
+  if (!filas2D || !filas2D.length) return null;
+  const headers = filas2D[0];
+  const idxNombre = headers.indexOf('nombre_constante');
+  const idxPrecio = headers.indexOf('precio_constante');
+  if (idxNombre === -1 || idxPrecio === -1) return null;
+  for (let i = 1; i < filas2D.length; i++) {
+    const fila = filas2D[i];
+    if (fila && fila[idxNombre] != null && fila[idxPrecio] != null) {
+      return { nombre: String(fila[idxNombre]).trim(), precio: Number(fila[idxPrecio]) };
+    }
+  }
+  return null;
+}
+
+function aplicarTazonExtra(constante) {
   const el = document.getElementById('promo-tazon-extra');
-  if (!el) return;
-  const item = items.find(it => it.nombre === NOMBRE_TAZON_EXTRA);
-  if (item && item.precio != null) el.textContent = formatPrecio(item.precio);
+  if (!el || !constante || !Number.isFinite(constante.precio)) return;
+  el.textContent = formatPrecio(constante.precio);
 }
 
 const RENDERERS = { size: renderSizeRows, row: renderMenuRows, pastry: renderPastryRows, promo: renderPromoRows };
@@ -126,7 +143,6 @@ function renderSector(id, kind, itemsRaw) {
   if (!container) return;
   const items = itemsRaw.map(normalizarItem).filter(it => it.nombre);
   container.innerHTML = RENDERERS[kind](items);
-  if (kind === 'promo') renderTazonExtra(items);
 }
 
 function renderDesdeWorkbook(workbook) {
@@ -137,6 +153,10 @@ function renderDesdeWorkbook(workbook) {
       return;
     }
     renderSector(id, kind, XLSX.utils.sheet_to_json(sheet, { defval: null }));
+    if (hoja === 'Promos') {
+      const filas2D = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: null });
+      aplicarTazonExtra(leerConstantePromos(filas2D));
+    }
   });
 }
 
@@ -148,6 +168,7 @@ function renderDesdeFallback(fallback) {
       return;
     }
     renderSector(id, kind, items);
+    if (hoja === 'Promos') aplicarTazonExtra(fallback['Promos_tazon_extra']);
   });
 }
 
