@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Menú — Cafetería Tina</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Asap+Condensed:ital,wght@0,500;0,600;0,700;0,800;1,500;1,600;1,700;1,800&display=swap" rel="stylesheet">
+  <style>
+    @font-face{font-family:'HelveticaNowDisplay-Medium';src:local('HelveticaNowDisplay-Medium'),local('Helvetica Now Display Medium'),local('HelveticaNow-Display-Medium');font-weight:500}
+    @font-face{font-family:'Helvetica Now Display';src:local('HelveticaNowDisplay-Medium'),local('Helvetica Now Display Medium'),local('Helvetica Now Display');font-weight:500}
+    :root{--cream:#fffbf4;--row:#e8e3da;--brown:#614e4c;--aqua:#a4d5cc;}
+    *{box-sizing:border-box} html{scroll-behavior:smooth} body{margin:0;background:var(--cream);color:var(--brown);font-family:'Asap Condensed',Arial,sans-serif;font-weight:600;padding-top:0} img{display:block;max-width:100%}
+
+    /* ── HAMBURGUESA FLOTANTE ── */
+    .btn-ham-float{display:flex;position:fixed;top:16px;left:16px;width:46px;height:46px;background:var(--brown);border:none;border-radius:50%;cursor:pointer;align-items:center;justify-content:center;box-shadow:0 3px 14px rgba(0,0,0,.38);z-index:150}
+    .btn-ham-float svg{width:20px;height:20px;stroke:#fffbf4;fill:none;stroke-width:2.4;stroke-linecap:round}
+
+    /* ── DRAWER ── */
+    .drawer-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.48);z-index:199}
+    .drawer-backdrop.open{display:block}
+    .nav-drawer{position:fixed;top:0;left:0;bottom:0;width:min(300px,85vw);background:var(--brown);z-index:200;transform:translateX(-100%);transition:transform .25s ease;display:flex;flex-direction:column;box-shadow:4px 0 24px rgba(0,0,0,.38)}
+    .nav-drawer.open{transform:translateX(0)}
+    .drawer-hdr{height:54px;display:flex;align-items:center;justify-content:space-between;padding:0 20px;background:#4e3d3b;flex-shrink:0}
+    .drawer-title{font-size:20px;font-weight:800;color:var(--cream);letter-spacing:.06em;text-transform:uppercase}
+    .btn-drawer-x{background:transparent;border:none;color:rgba(255,251,244,.7);font-size:26px;cursor:pointer;line-height:1;padding:4px 2px}
+    .drawer-links{overflow-y:auto;padding:6px 0 20px;flex:1}
+    .drawer-links a{display:flex;align-items:center;gap:12px;width:100%;text-decoration:none;font-size:21px;font-weight:700;color:rgba(255,251,244,.88);padding:14px 22px;border-bottom:1px solid rgba(255,251,244,.09);transition:background .15s}
+    .drawer-links a:hover,.drawer-links a:active{background:rgba(164,213,204,.22);color:var(--cream)}
+    .d-label{flex:1}
+
+    /* ── BACK TO TOP ── */
+    .btn-top{position:fixed;bottom:24px;right:20px;width:46px;height:46px;background:var(--brown);border:none;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 14px rgba(0,0,0,.38);opacity:0;transform:translateY(12px);transition:opacity .2s,transform .2s;z-index:98;pointer-events:none}
+    .btn-top.visible{opacity:1;transform:translateY(0);pointer-events:auto}
+    .btn-top svg{width:20px;height:20px;stroke:#fffbf4;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+
+    /* ── LAYOUT ── */
+    .sheet{max-width:1080px;margin:auto;background:var(--cream);overflow:hidden}
+    .hero{position:relative;padding:0 0 56px;text-align:center;background:var(--cream)}
+    .hero-bg{display:block;position:relative;width:100%;height:440px;background:url('assets/logo/fondo-hero.svg') center/contain no-repeat}
+    .hero-logo{display:block;position:relative;z-index:1;width:360px;margin:36px auto 28px;opacity:1}
+    .socials{display:none;position:relative;z-index:2;justify-content:center;gap:55px;flex-wrap:wrap}
+    .social{position:relative;background:var(--brown);color:var(--cream);border-radius:31px;padding:13px 28px 12px 58px;font-size:32px;font-weight:800;line-height:1;text-decoration:none}
+    .social small{position:absolute;right:18px;top:-22px;background:#ddd9d3;color:var(--brown);font-size:18px;border-radius:15px;padding:3px 12px}
+    .social b{position:absolute;left:20px;top:50%;transform:translateY(-52%);font-size:34px}
+    .story{display:none;position:relative;z-index:2;max-width:870px;margin:86px auto 0;grid-template-columns:3fr 2fr;gap:32px;text-align:left}
+    .story-card{position:relative;background:var(--brown);color:var(--cream);font-size:25px;line-height:1.06;padding:28px 31px;border-radius:4px}
+    .story-card:before{content:'♥';position:absolute;left:56px;top:-115px;width:76px;height:76px;border:2px solid var(--brown);border-radius:999px;background:var(--cream);color:var(--brown);display:grid;place-items:center;font-size:40px}
+    .story-card:after{content:'';position:absolute;left:94px;top:-39px;width:2px;height:39px;background:#614e4c88}
+    .story-label{justify-self:start;align-self:start;margin-top:-96px;background:var(--brown);color:var(--cream);font-size:22px;padding:16px 22px;font-weight:800;position:relative}
+    .story-label:after{content:'';position:absolute;left:-38px;bottom:0;border-style:solid;border-width:0 0 31px 38px;border-color:transparent transparent transparent var(--brown)}
+    .socials-svg{display:flex;justify-content:center;gap:44px;margin:32px auto 0;max-width:940px;padding:0 20px}
+    .social-svg-item{width:380px;height:auto;flex-shrink:0}
+    .dialogo-svg{display:block;max-width:940px;width:calc(100% - 40px);margin:36px auto 0}
+    .content{padding:0 48px 90px}
+    .menu-section{position:relative;scroll-margin-top:70px;margin-top:92px;min-height:180px}
+    .content>.menu-section:first-child{margin-top:0}
+    .section-copy{position:relative;z-index:2;max-width:610px}
+    .layout-right .section-copy{margin-left:auto}
+    .layout-left .section-icon{right:0;top:12px}
+    .layout-right .section-icon{left:0;top:18px}
+    .section-icon{position:absolute;height:280px;width:auto;opacity:.98;z-index:1}
+    #pasteleria .section-icon{height:220px}
+    .section-title{font-size:67px;line-height:.9;font-weight:800;letter-spacing:-.03em;margin:0 0 18px;text-shadow:2px 2px 0 #614e4c16}
+    .section-title span{font-size:.52em;font-style:italic;white-space:nowrap}
+    .menu-table{position:relative;z-index:2;font-size:32px;line-height:1.04}
+    .section-bar{height:29px;background:var(--row);margin-bottom:0}
+    .size-head,.size-row{display:grid;grid-template-columns:minmax(0,1fr) repeat(4,74px);gap:12px;align-items:baseline;padding:8px 13px}
+    .size-head{background:var(--row);font-size:27px;text-align:right;color:#614e4cbb;padding-block:5px}
+    .size-head span:first-child{text-align:left}
+    .size-row:nth-child(odd),.menu-row:nth-child(odd){background:#e8e3dab8}
+    .size-row span{text-align:right;font-size:.75em;font-style:italic}
+    .menu-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:16px;align-items:baseline;padding:8px 13px}
+    .menu-row strong{font-weight:600}
+    .menu-note-row{background:var(--row);font-size:.65em;font-style:italic;color:#614e4caa;padding:5px 13px 4px;line-height:1}
+    .menu-desc{display:block;font-size:.62em;font-style:italic;color:#614e4cbb;line-height:1.02;margin-top:2px}
+    .menu-desc-inline{font-size:.62em;font-style:italic;color:#614e4cbb;margin-left:6px}
+    .prices{display:flex;gap:22px;justify-content:flex-end;white-space:nowrap}
+    .menu-price{font-size:.75em;font-style:italic}
+    .tea-panel{position:relative;background:var(--brown);color:var(--cream);border-radius:24px;margin-top:125px;padding:44px 34px 62px;scroll-margin-top:70px}
+    .tea-tail-svg{position:absolute;right:130px;top:-82px;width:257px;height:auto}
+    .tea-panel h2,.tea-panel h3{font-size:60px;line-height:.92;font-weight:800;margin:0 0 18px;color:var(--cream)}
+    .tea-tabs{display:flex;gap:15px;margin-bottom:32px}
+    .tea-tabs span{background:var(--cream);color:var(--brown);border-radius:5px;padding:9px 28px;font-size:20px;font-weight:800}
+    .blend-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px 22px;margin-bottom:44px}
+    .blend-card{background:var(--cream);color:var(--brown);border-radius:9px;padding:17px 18px;min-height:94px}
+    .blend-card h4{font-size:26px;font-weight:800;line-height:1}
+    .blend-card i{float:right;font-size:16px;font-weight:800}
+    .blend-card p{font-size:15px;line-height:1.02;font-style:italic;color:#614e4cc4;margin:6px 0 0}
+    .tea-tip{display:inline-flex;background:var(--cream);color:var(--brown);border-radius:24px;padding:10px 24px;font-size:15px;font-style:italic;margin-bottom:28px}
+    .benefits .blend-card{min-height:auto}
+    .modern-section .section-copy{max-width:660px}
+    .modern-row{display:grid;grid-template-columns:118px 1fr 122px;gap:16px;align-items:center;background:#e8e3dab8;border-radius:42px;margin:10px 0;padding:5px 8px 5px 0}
+    .modern-row img{width:112px;height:112px;object-fit:cover;border-radius:999px}
+    .modern-row h3{font-size:29px;font-weight:800;line-height:.95;margin:0}
+    .modern-row p{font-size:18px;font-style:italic;line-height:.98;color:#614e4cbb;margin:2px 0 0}
+    .modern-row strong{justify-self:end;background:var(--brown);color:var(--cream);border-radius:9px;padding:15px 20px;font-size:26px;font-style:italic}
+    .breakfast-block{position:relative;margin:110px auto 0;display:grid;grid-template-columns:240px 1fr;gap:32px;align-items:center;scroll-margin-top:70px}
+    .breakfast-block img{width:195px}
+    .breakfast-table{border:8px solid #e8e3da;border-radius:8px;padding:12px;background:#fffbf4cc;font-size:32px}
+    .breakfast-table .menu-row{border-radius:4px;margin-bottom:4px;background:#e8e3daaa}
+    .promos-panel{position:relative;margin-top:120px;background:#e8e3dacc;border-right:7px solid var(--brown);border-bottom:7px solid var(--brown);padding:40px 32px 44px;scroll-margin-top:70px}
+    .promos-panel h2{font-size:68px;font-weight:800;line-height:.9;margin:0 0 22px}
+    .pastry-grid{display:flex;flex-direction:column;gap:10px}
+    .pastry-card{position:relative;display:flex;align-items:center;height:117px;padding-right:116px}
+    .pastry-bg{position:absolute;left:0;right:61px;top:0;bottom:0;background:#eae6df;border-radius:58.5px;z-index:0}
+    .pastry-circle{position:relative;z-index:1;width:117px;height:117px;border-radius:50%;background:#c8c0b6;flex-shrink:0;overflow:hidden;align-self:center}
+    .pastry-circle img{width:100%;height:100%;object-fit:cover}
+    .pastry-text{position:relative;z-index:1;flex:1;padding:0 22px;min-width:0}
+    .pastry-item-name{display:block;font-size:29px;font-weight:800;color:#614e4c;line-height:1.0;margin:0}
+    .pastry-desc{font-size:18px;font-style:italic;color:#614e4cbb;margin:3px 0 0;line-height:1.1}
+    .pastry-badge{position:absolute;right:0;top:50%;transform:translateY(-50%);background:#614e4c;color:#fffbf4;border-radius:9px;padding:15px 20px;font-size:26px;font-weight:700;white-space:nowrap;z-index:1;font-style:italic}
+    .promo-bubble-svg{position:absolute;left:315px;top:-85px;width:249px;height:auto}
+    .breakfast-table{position:relative}
+    .breakfast-table .sin-tacc{position:absolute;width:155px;right:0px;top:-170px}
+    .promo-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px 24px}
+    .promo-card{background:var(--cream);border-radius:8px;padding:18px 20px;min-height:112px;display:grid;grid-template-columns:1fr auto;gap:10px}
+    .promo-card h3{font-size:30px;font-weight:800;line-height:.95;margin:0}
+    .promo-card p{font-size:18px;font-style:italic;line-height:1;color:#614e4cbb;margin:3px 0 0}
+    .promo-card strong{font-size:22px;font-style:italic;white-space:nowrap}
+    .promo-tag{display:inline-block;width:max-content;background:var(--brown);color:var(--cream);font-size:18px;font-style:italic;padding:7px 16px;margin:4px 0 -8px;border-radius:2px}
+    .promo-share{display:flex;flex-direction:column;gap:0}
+    .promo-grid>:nth-child(9){grid-column:1;grid-row:5}
+    .promo-grid>:nth-child(10){grid-column:1;grid-row:6}
+    .promo-grid>:nth-child(11){grid-column:1;grid-row:7}
+    .promo-grid>:nth-child(12){grid-column:2;grid-row:5}
+    .promo-grid>:nth-child(13){grid-column:2;grid-row:6}
+    .promo-share .promo-tag{margin:0 0 -1px 0;border-radius:2px 2px 0 0}
+    .promo-share .promo-card{border-top-left-radius:0}
+
+    @media(max-width:900px){
+      .hero{min-height:900px;padding:0 20px 48px;background-image:none}
+      .hero-bg{display:block;position:relative;width:100%;height:0;padding-top:42%;background:url('assets/logo/fondo-hero.svg') center/contain no-repeat}
+      .hero-logo{display:block;margin-top:16px}
+      .socials-svg{flex-direction:column;align-items:center;gap:10px;margin:20px auto 0;max-width:360px;padding:0}
+      .social-svg-item{width:min(340px,100%)}
+      .dialogo-svg{width:calc(100% + 28px);max-width:none;margin:14px -14px 0}
+      .story{display:none}
+      .socials{display:none}
+      .content{padding:0 20px 60px}
+      .menu-section{margin-top:58px}
+      .section-copy,.layout-right .section-copy{max-width:none;margin:0}
+      .section-title{font-size:45px;margin-bottom:13px}
+      .section-icon{position:relative!important;float:right;inset:auto!important;height:50px;width:auto;max-width:none;margin:-12px 0 6px 16px}
+      .menu-table{clear:both;font-size:21px}
+      .size-head,.size-row{grid-template-columns:minmax(0,1fr) repeat(4,50px);gap:7px;padding:7px 8px}
+      .size-head{font-size:17px}
+      .menu-row{gap:8px;padding:8px}
+      .prices{gap:10px;line-height:1.05}
+      .tea-panel{margin:70px -8px 0;border-radius:16px;padding:26px 14px}
+      .tea-tail-svg{display:none}
+      .tea-panel h2,.tea-panel h3{font-size:41px}
+      .tea-tabs{gap:8px}
+      .tea-tabs span{font-size:16px;padding:8px 16px}
+      .blend-grid{grid-template-columns:1fr}
+      .modern-row{grid-template-columns:76px 1fr auto;border-radius:28px;gap:9px}
+      .modern-row img{width:72px;height:72px}
+      .modern-row h3{font-size:22px}
+      .modern-row p{font-size:14px}
+      .modern-row strong{font-size:18px;padding:10px 12px}
+      .breakfast-block{grid-template-columns:1fr;margin-top:45px}
+      .breakfast-block img{width:63px}
+      .breakfast-table{padding:8px;font-size:21px}
+      .promos-panel{margin:140px -8px 0;padding:54px 14px 22px}
+      .promos-panel h2{font-size:48px}
+      .promo-grid{grid-template-columns:1fr}
+      .promo-grid>:nth-child(n+9){grid-column:auto;grid-row:auto}
+      .promo-bubble-svg{left:100px;top:-70px;width:200px}
+      .pastry-card{height:88px;padding-right:94px}
+      .pastry-bg{right:46px;border-radius:44px}
+      .pastry-circle{width:88px;height:88px}
+      .pastry-text{padding:0 14px}
+      .pastry-item-name{font-size:22px}
+      .pastry-desc{font-size:14px}
+      .pastry-badge{padding:10px 14px;font-size:18px;border-radius:7px}
+      .breakfast-table .sin-tacc{width:100px;right:2px;top:-110px}
+    }
+    /* ── Design Mode ── */
+    .design-mode .hero>*{cursor:move;user-select:none}
+    .design-mode .hero>*:hover{outline:2px dashed #4488ff}
+    .design-label{position:absolute;top:-22px;left:0;background:#4488ff;color:#fff;font-size:11px;padding:2px 6px;white-space:nowrap;pointer-events:none;font-family:monospace;z-index:999}
+    #design-panel{position:fixed;bottom:20px;left:20px;background:#1a1a1a;color:#0f0;font-family:monospace;font-size:12px;padding:12px 16px;border-radius:8px;z-index:9999;max-width:420px;box-shadow:0 4px 24px #0008}
+    #design-panel strong{color:#fff;display:block;margin-bottom:8px;font-size:13px}
+    #design-panel pre{margin:0 0 8px;white-space:pre-wrap;line-height:1.5}
+    #design-panel button{background:#333;color:#fff;border:1px solid #555;padding:4px 12px;border-radius:4px;cursor:pointer;margin-right:8px}
+    #design-panel button:hover{background:#555}
+  </style>
+</head>
+<body>
+
+  <!-- Backdrop del drawer -->
+  <div class="drawer-backdrop" id="drawer-backdrop"></div>
+
+  <div class="page-wrap">
+
+  <!-- Drawer de secciones -->
+  <div class="nav-drawer" id="nav-drawer">
+    <div class="drawer-hdr">
+      <span class="drawer-title">Secciones</span>
+      <button class="btn-drawer-x" id="btn-drawer-x" aria-label="Cerrar">&#x2715;</button>
+    </div>
+    <nav class="drawer-links">
+      <a href="#inicio"><span class="d-label">Inicio</span></a>
+      <a href="#cafe"><span class="d-label">Café Tradicional</span></a>
+      <a href="#especialidad"><span class="d-label">Café de Especialidad</span></a>
+      <a href="#materos"><span class="d-label">Materos</span></a>
+      <a href="#frozen"><span class="d-label">Frozzen</span></a>
+      <a href="#tes"><span class="d-label">Té en Hebras</span></a>
+      <a href="#frapuccino"><span class="d-label">Frapucchino</span></a>
+      <a href="#bebidas"><span class="d-label">Bebidas</span></a>
+      <a href="#pasteleria"><span class="d-label">Pastelería Propia</span></a>
+      <a href="#antojos"><span class="d-label">Antojos</span></a>
+      <a href="#focaccias"><span class="d-label">Focaccias</span></a>
+      <a href="#moderna"><span class="d-label">Pastelería Moderna</span></a>
+      <a href="#desayunos"><span class="d-label">Sin TACC</span></a>
+      <a href="#promos"><span class="d-label">Promos</span></a>
+    </nav>
+  </div>
+
+  <!-- Botón volver arriba -->
+  <button class="btn-top" id="btn-top" aria-label="Volver al inicio">
+    <svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg>
+  </button>
+
+  <!-- Hamburguesa flotante (abre el drawer de secciones en móvil) -->
+  <button class="btn-ham-float" id="btn-ham" aria-label="Abrir secciones">
+    <svg viewBox="0 0 24 24"><line x1="3" y1="7" x2="21" y2="7"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="17" x2="21" y2="17"/></svg>
+  </button>
+  <main class="sheet">
+    <header id="inicio" class="hero">
+      <div class="hero-bg"></div>
+      <img class="hero-logo" src="assets/logo/logo-menu-tina.svg" alt="Men&#250; Tina">
+      <!-- Desktop: SVG components -->
+      <div class="socials-svg">
+        <a href="https://www.facebook.com/tinacafetepasteleria/?locale=es_LA" target="_blank" rel="noopener noreferrer" style="display:contents;cursor:pointer">
+        <svg class="social-svg-item" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 468.04 121.42">
+  <defs>
+    <clipPath id="fb-cp1">
+      <rect x="230.46" y="-1.83" width="208" height="70" style="fill: none;"/>
+    </clipPath>
+    <clipPath id="fb-cp2">
+      <rect x="230.46" y="-1.87" width="208" height="70" style="fill: none;"/>
+    </clipPath>
+  </defs>
+  <g style="isolation: isolate;">
+    <g id="fb-capa" data-name="Capa 1">
+      <path d="M422.79,121.42H45.26C20.26,121.42,0,101.16,0,76.16S20.26,30.91,45.26,30.91h377.53c24.99,0,45.26,20.26,45.26,45.26s-20.26,45.26-45.26,45.26" style="fill: #614e4c;"/>
+      <path d="M48.74,103.55h11.03v-27.62h7.7l.82-9.25h-8.52v-5.27c0-2.18.44-3.04,2.55-3.04h5.97v-9.6h-7.64c-8.21,0-11.91,3.62-11.91,10.54v7.37h-5.74v9.36h5.74v27.51Z" style="fill: #fffbf4;"/>
+      <text transform="translate(100.97 93.26)" style="fill: #fffbf4; font-family: AsapCondensed-ExtraBold, &apos;Asap Condensed&apos;; font-size: 48.53px; font-weight: 700;"><tspan x="0" y="0">Seguirnos en </tspan><tspan x="234.53" y="0" style="letter-spacing: -.02em;">F</tspan><tspan x="253.12" y="0" style="letter-spacing: 0em;">ace</tspan></text>
+      <g style="mix-blend-mode: multiply; opacity: .5;">
+        <g style="clip-path: url(#fb-cp1);">
+          <g style="clip-path: url(#fb-cp2);">
+            <image width="208" height="70" transform="translate(230.46 -1.87)" xlink:href="data:image/png;base64,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"/>
+          </g>
+        </g>
+      </g>
+      <path d="M398.5,47.79h-138.33c-10.79,0-19.54-8.75-19.54-19.54s8.75-19.54,19.54-19.54h138.33c10.79,0,19.54,8.75,19.54,19.54s-8.75,19.54-19.54,19.54" style="fill: #ddd9d3;"/>
+      <text transform="translate(256.45 37.43)" style="fill: #614e4c; font-family: AsapCondensed-ExtraBold, &apos;Asap Condensed&apos;; font-size: 30.12px; font-weight: 700;"><tspan x="0" y="0">clic aquí pa</tspan><tspan x="123.48" y="0" style="letter-spacing: -.02em;">r</tspan><tspan x="131.79" y="0">a</tspan></text>
+    </g>
+  </g>
+</svg>
+        </a>
+        <a href="https://www.instagram.com/tinacafetepasteleria/?hl=es" target="_blank" rel="noopener noreferrer" style="display:contents;cursor:pointer">
+        <svg class="social-svg-item" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 464.24 121.42">
+  <defs>
+    <clipPath id="ig-cp1">
+      <rect x="230.59" y="-1.83" width="208" height="70" style="fill: none;"/>
+    </clipPath>
+    <clipPath id="ig-cp2">
+      <rect x="230.59" y="-1.87" width="208" height="70" style="fill: none;"/>
+    </clipPath>
+  </defs>
+  <g style="isolation: isolate;">
+    <g id="ig-capa" data-name="Capa 1">
+      <path d="M422.79,121.42H45.26C20.26,121.42,0,101.16,0,76.16S20.26,30.91,45.26,30.91h377.53c24.99,0,45.26,20.26,45.26,45.26s-20.26,45.26-45.26,45.26" style="fill: #614e4c;"/>
+      <path d="M55.76,54.91c6.92,0,7.74.03,10.48.15,2.53.12,3.9.54,4.81.89,1.21.47,2.07,1.03,2.98,1.94.91.91,1.47,1.77,1.94,2.98.35.91.78,2.29.89,4.81.12,2.74.15,3.55.15,10.48s-.03,7.74-.15,10.47c-.12,2.53-.54,3.9-.89,4.81-.47,1.21-1.03,2.07-1.94,2.98-.91.91-1.77,1.47-2.98,1.94-.91.35-2.29.78-4.81.89-2.73.12-3.55.15-10.48.15s-7.74-.03-10.48-.15c-2.53-.12-3.9-.54-4.81-.89-1.21-.47-2.07-1.03-2.98-1.94-.91-.91-1.47-1.77-1.94-2.98-.35-.91-.78-2.29-.89-4.81-.12-2.73-.15-3.55-.15-10.47s.03-7.74.15-10.48c.12-2.53.54-3.9.89-4.81.47-1.21,1.03-2.07,1.94-2.98.91-.91,1.77-1.47,2.98-1.94.91-.36,2.29-.78,4.81-.89,2.73-.12,3.55-.15,10.48-.15M55.76,50.24c-7.04,0-7.92.03-10.69.16-2.76.13-4.64.57-6.29,1.21-1.7.66-3.15,1.55-4.59,2.99-1.44,1.44-2.33,2.89-2.99,4.59-.64,1.65-1.08,3.53-1.21,6.29-.13,2.77-.16,3.65-.16,10.69s.03,7.92.16,10.69c.13,2.76.56,4.64,1.21,6.29.66,1.7,1.55,3.15,2.99,4.59,1.44,1.44,2.89,2.33,4.59,2.99,1.65.64,3.53,1.08,6.29,1.21,2.77.13,3.65.16,10.69.16s7.92-.03,10.69-.16c2.76-.13,4.64-.56,6.29-1.21,1.7-.66,3.15-1.55,4.59-2.99,1.44-1.44,2.33-2.89,2.99-4.59.64-1.65,1.08-3.53,1.21-6.29.13-2.76.16-3.65.16-10.69s-.03-7.92-.16-10.69c-.13-2.76-.57-4.64-1.21-6.29-.66-1.7-1.55-3.15-2.99-4.59-1.44-1.44-2.89-2.33-4.59-2.99-1.65-.64-3.53-1.08-6.29-1.21-2.77-.13-3.65-.16-10.69-.16" style="fill: #fffbf4;"/>
+      <path d="M55.76,62.85c-7.35,0-13.31,5.96-13.31,13.31s5.96,13.31,13.31,13.31,13.31-5.96,13.31-13.31-5.96-13.31-13.31-13.31M55.76,84.81c-4.77,0-8.64-3.87-8.64-8.64s3.87-8.64,8.64-8.64,8.64,3.87,8.64,8.64-3.87,8.64-8.64,8.64" style="fill: #fffbf4;"/>
+      <path d="M72.71,62.32c0,1.72-1.39,3.11-3.11,3.11s-3.11-1.39-3.11-3.11,1.39-3.11,3.11-3.11,3.11,1.39,3.11,3.11" style="fill: #fffbf4;"/>
+      <text transform="translate(107.61 93.26)" style="fill: #fffbf4; font-family: AsapCondensed-ExtraBold, &apos;Asap Condensed&apos;; font-size: 48.53px; font-weight: 700;"><tspan x="0" y="0">Seguirnos en Insta</tspan></text>
+      <g style="mix-blend-mode: multiply; opacity: .5;">
+        <g style="clip-path: url(#ig-cp1);">
+          <g style="clip-path: url(#ig-cp2);">
+            <image width="208" height="70" transform="translate(230.59 -1.87)" xlink:href="data:image/png;base64,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"/>
+          </g>
+        </g>
+      </g>
+      <path d="M398.5,47.79h-138.33c-10.79,0-19.54-8.75-19.54-19.54s8.75-19.54,19.54-19.54h138.33c10.79,0,19.54,8.75,19.54,19.54s-8.75,19.54-19.54,19.54" style="fill: #ddd9d3;"/>
+      <text transform="translate(256.45 37.43)" style="fill: #614e4c; font-family: AsapCondensed-ExtraBold, &apos;Asap Condensed&apos;; font-size: 30.12px; font-weight: 700;"><tspan x="0" y="0">clic aquí pa</tspan><tspan x="123.48" y="0" style="letter-spacing: -.02em;">r</tspan><tspan x="131.79" y="0">a</tspan></text>
+    </g>
+  </g>
+</svg>
+        </a>
+      </div>
+      <svg class="dialogo-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 788.46 430.22">
+  <rect x="100.28" y="93.06" width="1.33" height="92.69" style="fill: #614e4c;"/>
+  <path d="M100.95,93.73c-25.84,0-46.86-21.02-46.86-46.86S75.11,0,100.95,0s46.86,21.02,46.86,46.86-21.02,46.86-46.86,46.86M100.95,1.33c-25.11,0-45.53,20.43-45.53,45.53s20.42,45.53,45.53,45.53,45.53-20.42,45.53-45.53S126.06,1.33,100.95,1.33" style="fill: #614e4c;"/>
+  <path d="M125.72,32.85c-1.16-2.67-3.1-4.93-5.46-6.36-2.36-1.43-5.26-2.11-8.16-1.91-2.9.2-5.68,1.27-7.83,3.01-1.35,1.1-2.47,2.47-3.32,4.04-.85-1.57-1.98-2.94-3.32-4.04-2.14-1.74-4.92-2.81-7.83-3.01-2.91-.2-5.81.48-8.17,1.91-2.36,1.43-4.29,3.69-5.45,6.36-1.16,2.66-1.49,5.62-.94,8.33.83,4.09,2.74,7.71,5.86,11.07,2.71,2.92,5.97,5.3,9.12,7.6,3.86,2.81,7.51,5.47,9.84,8.87.2.29.53.47.89.47s.69-.18.89-.47c2.33-3.4,5.98-6.05,9.84-8.87,3.15-2.3,6.41-4.67,9.12-7.6,3.12-3.36,5.04-6.98,5.86-11.07.55-2.71.21-5.67-.94-8.33" style="fill: #614e4c;"/>
+  <path d="M751.81,114.47h-271.13c-4.57,0-8.28,3.71-8.28,8.28v54.72c0,4.57,3.71,8.28,8.28,8.28h299.49c4.57,0,8.28-3.71,8.28-8.28v-92.52l-36.64,29.52Z" style="fill: #614e4c;"/>
+  <text transform="translate(497.51 158.11)" style="fill: #fffbf4; font-family: AsapCondensed-Medium, 'Asap Condensed'; font-size: 30.25px; font-weight: 800;">¿Qué signiﬁca Tina?</text>
+  <path d="M560.57,215.55c0-4.57-3.71-8.28-8.28-8.28H33.39L0,180.37v51.5h0v190.07c0,4.57,3.71,8.28,8.28,8.28h544.01c4.57,0,8.28-3.71,8.28-8.28v-206.38Z" style="fill: #614e4c;"/>
+  <text transform="translate(34.02 248.78)" style="fill: #fffbf4; font-family: AsapCondensed-Medium, 'Asap Condensed'; font-size: 27.23px; font-weight: 500;">Tina nace del amor de mamá; Valentina y</text>
+  <text transform="translate(34.02 279.03)" style="fill: #fffbf4; font-family: AsapCondensed-Medium, 'Asap Condensed'; font-size: 27.23px; font-weight: 500;">Agustina. De sus nombres surge “Tina”,</text>
+  <text transform="translate(34.05 310.5) rotate(-.28)" style="fill: #fffbf4; font-family: AsapCondensed-Medium, 'Asap Condensed'; font-size: 27.23px; font-weight: 500;">un nombre pequeño y lleno de cariño. Y</text>
+  <text transform="translate(34.02 339.53)" style="fill: #fffbf4; font-family: AsapCondensed-Medium, 'Asap Condensed'; font-size: 27.23px; font-weight: 500;">así como crece una familia, también crece</text>
+  <text transform="translate(34.02 369.78)" style="fill: #fffbf4; font-family: AsapCondensed-Medium, 'Asap Condensed'; font-size: 27.23px; font-weight: 500;">Cafetería Tina, donde cada persona que</text>
+  <text transform="translate(34.02 400.03)" style="fill: #fffbf4; font-family: AsapCondensed-Medium, 'Asap Condensed'; font-size: 27.23px; font-weight: 500;">nos visita es parte de la familia</text>
+</svg>
+      <!-- Mobile: HTML elements -->
+      <div class="socials">
+        <a class="social" href="https://www.facebook.com/tinacafetepasteleria/?locale=es_LA" target="_blank" rel="noopener noreferrer"><small>clic aqu&#237; para</small><b>f</b>Segu&#237;nos en Face</a>
+        <a class="social" href="https://www.instagram.com/tinacafetepasteleria/?hl=es" target="_blank" rel="noopener noreferrer"><small>clic aqu&#237; para</small><b>&#9678;</b>Segu&#237;nos en Insta</a>
+      </div>
+      <div class="story">
+        <div class="story-card">Tina nace del amor de mam&#225;; Valentina y Agustina. De sus nombres surge &#8220;Tina&#8221;, un nombre peque&#241;o y lleno de cari&#241;o. Y as&#237; como crece una familia, tambi&#233;n crece Cafeter&#237;a Tina, donde cada persona que nos visita es parte de la familia</div>
+        <div class="story-label">&#191;Qu&#233; significa Tina?</div>
+      </div>
+    </header>
+
+    <div class="content">
+
+      <!-- ═══ CAFÉ TRADICIONAL ═══ -->
+      <section id="cafe" class="menu-section layout-left">
+        <img class="section-icon" src="assets/iconos/icono-cafe-tradicional.svg" alt="" loading="lazy">
+        <div class="section-copy">
+          <h2 class="section-title">Caf&#233; tradicional</h2>
+          <div class="menu-table">
+            <div class="size-head"><span></span><span>S</span><span>M</span><span>L</span><span>XL</span></div>
+            <div class="size-row">
+              <strong>Expresso</strong><span data-precio="cafe_s"></span><span data-precio="cafe_m"></span><span data-precio="cafe_l"></span><span data-precio="cafe_xl"></span>
+            </div>
+            <div class="size-row">
+              <strong>Doble Expresso</strong><span data-precio="cafe_s"></span><span data-precio="cafe_m"></span><span data-precio="cafe_l"></span><span data-precio="cafe_xl"></span>
+            </div>
+            <div class="size-row">
+              <strong>Caf&#233; con leche</strong><span data-precio="cafe_s"></span><span data-precio="cafe_m"></span><span data-precio="cafe_l"></span><span data-precio="cafe_xl"></span>
+            </div>
+            <div class="size-row">
+              <strong>Cortado</strong><span data-precio="cafe_s"></span><span data-precio="cafe_m"></span><span data-precio="cafe_l"></span><span data-precio="cafe_xl"></span>
+            </div>
+            <div class="size-row">
+              <strong>L&#225;grima</strong><span data-precio="cafe_s"></span><span data-precio="cafe_m"></span><span data-precio="cafe_l"></span><span data-precio="cafe_xl"></span>
+            </div>
+            <div class="size-row">
+              <strong>Expresso Panna</strong><span data-precio="cafe_s"></span><span data-precio="cafe_m"></span><span data-precio="cafe_l"></span><span data-precio="cafe_xl"></span>
+            </div>
+            <div class="size-row">
+              <strong>Ice Coffee</strong><span data-precio="cafe_s"></span><span data-precio="cafe_m"></span><span data-precio="cafe_l"></span><span data-precio="cafe_xl"></span>
+            </div>
+            <div class="size-row">
+              <strong>Expresso Tonic</strong><span data-precio="cafe_s"></span><span data-precio="cafe_m"></span><span data-precio="cafe_l"></span><span data-precio="cafe_xl"></span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══ CAFÉ DE ESPECIALIDAD ═══ -->
+      <section id="especialidad" class="menu-section layout-right">
+        <img class="section-icon" src="assets/iconos/icono-cafe-especialidad.svg" alt="" loading="lazy">
+        <div class="section-copy">
+          <h2 class="section-title">Caf&#233; de especialidad</h2>
+          <div class="menu-table">
+            <div class="section-bar"></div>
+            <div class="menu-row">
+              <div class="min-w-0"><strong>Capuccino</strong><small class="menu-desc">Cl&#225;sico / Frambuesa</small></div>
+              <div class="prices"><span class="menu-price" data-precio="especialidad"></span></div>
+            </div>
+            <div class="menu-row">
+              <div class="min-w-0"><strong>Caf&#233; Moccha Vien&#233;s</strong></div>
+              <div class="prices"><span class="menu-price" data-precio="especialidad"></span></div>
+            </div>
+            <div class="menu-row">
+              <div class="min-w-0"><strong>Caramel Macchiato</strong></div>
+              <div class="prices"><span class="menu-price" data-precio="especialidad"></span></div>
+            </div>
+            <div class="menu-row">
+              <div class="min-w-0"><strong>Macchiato Avellanas</strong></div>
+              <div class="prices"><span class="menu-price" data-precio="especialidad"></span></div>
+            </div>
+            <div class="menu-row">
+              <div class="min-w-0"><strong>Caf&#233; Irland&#233;s</strong></div>
+              <div class="prices"><span class="menu-price" data-precio="especialidad"></span></div>
+            </div>
+            <div class="menu-row">
+              <div class="min-w-0"><strong>Latte Vainilla</strong></div>
+              <div class="prices"><span class="menu-price" data-precio="especialidad"></span></div>
+            </div>
+            <div class="menu-row">
+              <div class="min-w-0"><strong>Affogato</strong></div>
+              <div class="prices"><span class="menu-price" data-precio="especialidad"></span></div>
+            </div>
+            <div class="menu-row">
+              <div class="min-w-0"><strong>Iced Coffee</strong><small class="menu-desc">Pistacho / Coco</small></div>
+              <div class="prices"><span class="menu-price" data-precio="especialidad"></span></div>
+            </div>
+            <div class="menu-row">
+              <div class="min-w-0"><strong>Caf&#233; Tina</strong></div>
+              <div class="prices"><span class="menu-price" data-precio="especialidad"></span></div>
+            </div>
+            <div class="menu-row">
+              <div class="min-w-0"><strong>Caf&#233; Bomb&#243;n</strong></div>
+              <div class="prices"><span class="menu-price" data-precio="especialidad"></span></div>
+            </div>
+            <div class="menu-row">
+              <div class="min-w-0"><strong>Caf&#233; caribe&#241;o</strong></div>
+              <div class="prices"><span class="menu-price" data-precio="especialidad"></span></div>
+            </div>
+            <div class="menu-row">
+              <div class="min-w-0"><strong>Submarino</strong></div>
+              <div class="prices"><span class="menu-price" data-precio="especialidad"></span></div>
+            </div>
+            <div class="menu-row">
+              <div class="min-w-0"><strong>Bayleis</strong></div>
+              <div class="prices"><span class="menu-price" data-precio="especialidad"></span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══ MATEROS ═══ -->
+      <section id="materos" class="menu-section layout-left">
+        <img class="section-icon" src="assets/iconos/icono-materos.svg" alt="" loading="lazy">
+        <div class="section-copy">
+          <h2 class="section-title">Materos</h2>
+          <div class="menu-table">
+            <div class="menu-note-row">mate + blend yerba a elecci&#243;n + termo 80&#176;</div>
+            <div class="menu-row">
+              <div class="min-w-0"><strong>Jaguar / Pampa / Paradise</strong></div>
+              <div class="prices"><span class="menu-price" data-precio="materos_clasico"></span></div>
+            </div>
+            <div class="menu-row">
+              <div class="min-w-0"><strong>Opci&#243;n Terer&#233;</strong></div>
+              <div class="prices"><span class="menu-price" data-precio="materos_terere"></span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══ FROZZEN ═══ -->
+      <section id="frozen" class="menu-section layout-right">
+        <img class="section-icon" src="assets/iconos/icono-frozen.svg" alt="" loading="lazy">
+        <div class="section-copy">
+          <h2 class="section-title">Frozzen <span>a base de frutas</span></h2>
+          <div class="menu-table">
+            <div class="section-bar"></div>
+            <div class="menu-row">
+              <div class="min-w-0"><strong>Banana con dulce de leche</strong></div>
+              <div class="prices"><span class="menu-price" data-precio="frozen"></span></div>
+            </div>
+            <div class="menu-row">
+              <div class="min-w-0"><strong>Ar&#225;ndanos</strong></div>
+              <div class="prices"><span class="menu-price" data-precio="frozen"></span></div>
+            </div>
+            <div class="menu-row">
+              <div class="min-w-0"><strong>Frutos rojos</strong></div>
+              <div class="prices"><span class="menu-price" data-precio="frozen"></span></div>
+            </div>
+            <div class="menu-row">
+              <div class="min-w-0"><strong>Frutillas con crema</strong></div>
+              <div class="prices"><span class="menu-price" data-precio="frozen"></span></div>
+            </div>
+            <div class="menu-row">
+              <div class="min-w-0"><strong>Mousse de lim&#243;n</strong></div>
+              <div class="prices"><span class="menu-price" data-precio="frozen"></span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══ TÉ EN HEBRAS ═══ -->
+      <section id="tes" class="menu-section layout-left">
+        <img class="section-icon" src="assets/iconos/icono-tes.svg" alt="" loading="lazy">
+        <div class="section-copy">
+          <h2 class="section-title">T&#233; en hebras</h2>
+          <div class="menu-table">
+            <div class="section-bar"></div>
+            <div class="menu-row">
+              <div class="min-w-0"><strong>Tetera para compartir</strong></div>
+              <div class="prices"><span class="menu-price" data-precio="te_compartir"></span></div>
+            </div>
+            <div class="menu-row">
+              <div class="min-w-0"><strong>Tetera individual</strong></div>
+              <div class="prices"><span class="menu-price" data-precio="te_individual"></span></div>
+            </div>
+            <div class="menu-row">
+              <div class="min-w-0"><strong>T&#233; / Yerbeado</strong></div>
+              <div class="prices"><span class="menu-price" data-precio="te_yerbeado"></span></div>
+            </div>
+            <div class="menu-row">
+              <div class="min-w-0"><strong>Matcha latte</strong><small class="menu-desc">t&#233; verde en polvo con leche</small></div>
+              <div class="prices"><span class="menu-price" data-precio="te_matcha_latte"></span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══ BLENDS (TEA PANEL) ═══ -->
+      <section id="hebras" class="tea-panel">
+        <svg class="tea-tail-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256.78 95.53">
+          <path d="M251.19,0H5.59C2.5,0,0,2.5,0,5.59v89.93l30.34-23.69h220.85c3.09,0,5.59-2.5,5.59-5.59V5.59c0-3.09-2.5-5.59-5.59-5.59Z" style="fill: #fffbf4;"/>
+          <text transform="translate(23.04 33)" style="fill: #614e4c; font-family: AsapCondensed-Medium, 'Asap Condensed'; font-size: 23.82px; font-weight: 500;">el menú que esperas</text>
+          <text transform="translate(23.04 61)" style="fill: #614e4c; font-family: AsapCondensed-Medium, 'Asap Condensed'; font-size: 23.82px; font-weight: 500;">para elegir tu té</text>
+        </svg>
+        <h2>cl&#225;sicos en hebras</h2>
+        <div class="tea-tabs"><span>Verde</span><span>Negro</span><span>Rojo</span></div>
+        <h3>blends a base de t&#233; verde</h3>
+        <div class="blend-grid">
+          <article class="blend-card"><i>Serenidad</i><h4>Calma T&#233;</h4><p>Mezcla de t&#233; verde, manzanilla, cedr&#243;n, p&#233;talos de rosa, cal&#233;ndula, menta, melisa, flor de lavanda, tilo. Sabor lim&#243;n y manzanilla</p></article>
+          <article class="blend-card"><i>Contemplaci&#243;n</i><h4>Dulce Atardecer</h4><p>T&#233; verde con mezcla de especias, hierbas y flores</p></article>
+          <article class="blend-card"><i>Esperanza</i><h4>Flower Mint</h4><p>T&#233; verde con jazm&#237;n, menta, p&#233;talos de rosa. Sabor jazm&#237;n y menta</p></article>
+          <article class="blend-card"><i>Compromiso</i><h4>Noon</h4><p>T&#233; verde con manzana, frambuesa y canela en ramas. Sabor manzana, frambuesa y canela</p></article>
+          <article class="blend-card"><i>Encanto</i><h4>Fruta de la Pasi&#243;n</h4><p>T&#233; verde, maracuy&#225;, mango, durazno, damasco, ana&#241;&#225;, p&#233;talos de rosas, banana, cal&#233;ndula y chocolate de vainilla</p></article>
+          <article class="blend-card"><i>Compromiso</i><h4>Matcha</h4><p>T&#233; verde finamente molido utilizado en ceremonia de t&#233; japon&#233;s</p></article>
+        </div>
+        <div class="tea-tip"><img src="assets/iconos/icono-reloj-arena.svg" alt="" style="height:22px;width:auto;vertical-align:middle;margin-right:8px"> Agregar agua caliente, colocar una cucharada de t&#233; y dejar reposar 3 min.</div>
+        <h3>beneficios del t&#233; matcha</h3>
+        <div class="blend-grid benefits">
+          <article class="blend-card"><p>Antioxidante<br>Desintoxicante<br>Reduce la presi&#243;n<br>Reduce el estr&#233;s<br>Aumenta la energ&#237;a</p></article>
+          <article class="blend-card"><p>Disminuye colesterol<br>Antibi&#243;tico Natural<br>Estabiliza los niveles de sangre<br>Fortalece el sistema inmunol&#243;gico</p></article>
+        </div>
+        <h3>blends a base de t&#233; negro</h3>
+        <div class="blend-grid">
+          <article class="blend-card"><i>Placer</i><h4>Hot Chocolate</h4><p>Mezcla de t&#233; negro con almendras tostadas. Sabor chocolate y vainilla</p></article>
+          <article class="blend-card"><i>Sabidur&#237;a</i><h4>Mil Santos</h4><p>Mezcla de t&#233; negro con pasas de uva, naranja, p&#233;talos de rosa y canela. Sabor naranja</p></article>
+        </div>
+        <div class="tea-tip"><img src="assets/iconos/icono-reloj-arena.svg" alt="" style="height:22px;width:auto;vertical-align:middle;margin-right:8px"> Agregar agua caliente, colocar una cucharada de t&#233; y dejar reposar 3 min.</div>
+        <h3>blends a base de t&#233; rojo</h3>
+        <div class="blend-grid">
+          <article class="blend-card"><i>Alegr&#237;a</i><h4>Happy Berry</h4><p>T&#233; rojo, frutilla, frambuesa grosella y cereza</p></article>
+          <article class="blend-card"><i>Nobleza</i><h4>M&#225;xima</h4><p>T&#233; rojo, jengibre, p&#233;talos de rosa, naranja deshidratada, enebro y pimpollos de jazm&#237;n. Sabor naranja y jazm&#237;n</p></article>
+          <article class="blend-card"><i>Amor</i><h4>Venus</h4><p>T&#233; rojo, uva, frutilla, maracuy&#225;, chaucha de vainilla y p&#233;talos de rosa</p></article>
+        </div>
+        <div class="tea-tip"><img src="assets/iconos/icono-reloj-arena.svg" alt="" style="height:22px;width:auto;vertical-align:middle;margin-right:8px"> Agregar agua caliente, colocar una cucharada de t&#233; y dejar reposar 3 min.</div>
+        <h3>beneficios de cada blend</h3>
+        <div class="blend-grid benefits">
+          <article class="blend-card"><h4>T&#233; Negro</h4><p>Es una variedad altamente estimulante. Es m&#225;s recomendable para tomar a primera hora del d&#237;a.</p></article>
+          <article class="blend-card"><h4>T&#233; Rojo</h4><p>Es un aliado para combatir el colesterol. Previene la retenci&#243;n de l&#237;quidos ayudando a eliminar toxinas.</p></article>
+          <article class="blend-card"><h4>T&#233; Verde</h4><p>Es antioxidante por excelencia. Ayuda a prevenir el c&#225;ncer y retrasa el envejecimiento celular.</p></article>
+        </div>
+        <h3>variedades de yerba mate</h3>
+        <div class="blend-grid">
+          <article class="blend-card"><h4>Jaguar</h4><p>Mezcla de yerba mate, t&#233; verde, c&#225;scara de naranja, canela, jengibre, cardamomo y pimienta</p></article>
+          <article class="blend-card"><h4>Pampa</h4><p>Mezcla de yerba mate, t&#233; verde, cedr&#243;n, menta, peperina, poleo, rosas</p></article>
+          <article class="blend-card"><h4>Paradise</h4><p>Mezcla de yerba mate, t&#233; verde, manzana, rosa mosqueta, ar&#225;ndanos, ana&#241;&#225; y papaya</p></article>
+        </div>
+      </section>
+
+      <!-- ═══ FRAPUCCHINO ═══ -->
+      <section id="frapuccino" class="menu-section layout-right">
+        <img class="section-icon" src="assets/iconos/icono-frapuccino.svg" alt="" loading="lazy">
+        <div class="section-copy">
+          <h2 class="section-title">Frapucchino <span>a base de caf&#233;</span></h2>
+          <div class="menu-table">
+            <div class="section-bar"></div>
+            <div class="menu-row">
+              <div class="min-w-0"><strong>Caf&#233; bomb&#243;n</strong></div>
+              <div class="prices"><span class="menu-price" data-precio="frapu"></span></div>
+            </div>
+            <div class="menu-row">
+              <div class="min-w-0"><strong>Mocha Vainilla Latte</strong></div>
+              <div class="prices"><span class="menu-price" data-precio="frapu"></span></div>
+            </div>
+            <div class="menu-row">
+              <div class="min-w-0"><strong>Caramel Avellanas</strong></div>
+              <div class="prices"><span class="menu-price" data-precio="frapu"></span></div>
+            </div>
+            <div class="menu-row">
+              <div class="min-w-0"><strong>Frambuesa</strong></div>
+              <div class="prices"><span class="menu-price" data-precio="frapu"></span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══ BEBIDAS ═══ -->
+      <section id="bebidas" class="menu-section layout-left">
+        <img class="section-icon" src="assets/iconos/icono-bebidas.svg" alt="" loading="lazy">
+        <div class="section-copy">
+          <h2 class="section-title">Bebidas</h2>
+          <div class="menu-table">
+            <div class="section-bar"></div>
+            <div class="menu-row">
+              <div class="min-w-0"><strong>Agua / Agua Saborizada</strong></div>
+              <div class="prices"><span class="menu-price" data-precio="bebida_agua"></span></div>
+            </div>
+            <div class="menu-row">
+              <div class="min-w-0"><strong>Gaseosas</strong><small class="menu-desc-inline">L&#237;nea Pepsi</small></div>
+              <div class="prices"><span class="menu-price" data-precio="bebida_gaseosa"></span></div>
+            </div>
+            <div class="menu-row">
+              <div class="min-w-0"><strong>Jugo natural de naranja</strong></div>
+              <div class="prices">
+                <span class="menu-price" data-precio="jugo_peq"></span>
+                <span class="menu-price" data-precio="jugo_gr"></span>
+              </div>
+            </div>
+            <div class="menu-row">
+              <div class="min-w-0"><strong>Pomelada</strong></div>
+              <div class="prices"><span class="menu-price" data-precio="pomelada"></span></div>
+            </div>
+            <div class="menu-row">
+              <div class="min-w-0"><strong>Limonada</strong><small class="menu-desc">Cl&#225;sica / Menta jengibre / Ar&#225;ndanos / Maracuy&#225; / Cereza</small></div>
+              <div class="prices">
+                <span class="menu-price" data-precio="limonada_peq"></span>
+                <span class="menu-price" data-precio="limonada_gr"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══ PASTELERÍA PROPIA ═══ -->
+      <section id="pasteleria" class="menu-section layout-right">
+        <img class="section-icon" src="assets/iconos/icono-pasteleria.svg" alt="" loading="lazy">
+        <div class="section-copy">
+          <h2 class="section-title">Paster&#237;a propia</h2>
+          <div class="menu-table">
+            <div class="section-bar"></div>
+            <div class="menu-row"><div class="min-w-0"><strong>Brownie con frutos rojos</strong></div><div class="prices"><span class="menu-price" data-precio="pasteleria"></span></div></div>
+            <div class="menu-row"><div class="min-w-0"><strong>Crumble</strong></div><div class="prices"><span class="menu-price" data-precio="pasteleria"></span></div></div>
+            <div class="menu-row"><div class="min-w-0"><strong>Cheesecake</strong></div><div class="prices"><span class="menu-price" data-precio="pasteleria"></span></div></div>
+            <div class="menu-row"><div class="min-w-0"><strong>Balcarce</strong></div><div class="prices"><span class="menu-price" data-precio="pasteleria"></span></div></div>
+            <div class="menu-row"><div class="min-w-0"><strong>Selva Negra</strong></div><div class="prices"><span class="menu-price" data-precio="pasteleria"></span></div></div>
+            <div class="menu-row"><div class="min-w-0"><strong>Lemon Pie</strong></div><div class="prices"><span class="menu-price" data-precio="pasteleria"></span></div></div>
+            <div class="menu-row"><div class="min-w-0"><strong>Lim&#243;n Cocado</strong></div><div class="prices"><span class="menu-price" data-precio="pasteleria"></span></div></div>
+            <div class="menu-row"><div class="min-w-0"><strong>Tiramisú</strong></div><div class="prices"><span class="menu-price" data-precio="pasteleria"></span></div></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══ ANTOJOS ═══ -->
+      <section id="antojos" class="menu-section layout-left">
+        <img class="section-icon" src="assets/iconos/icono-antojos.svg" alt="" loading="lazy">
+        <div class="section-copy">
+          <h2 class="section-title">Antojos</h2>
+          <div class="menu-table">
+            <div class="section-bar"></div>
+            <div class="menu-row">
+              <div class="min-w-0"><strong>Alfajores Premium</strong><small class="menu-desc">Pistacho / Red Velvet / Chocotorta</small></div>
+              <div class="prices"><span class="menu-price" data-precio="alfajor_premium"></span></div>
+            </div>
+            <div class="menu-row">
+              <div class="min-w-0"><strong>Alfajor Maicena / Miel</strong></div>
+              <div class="prices"><span class="menu-price" data-precio="alfajor_maicena"></span></div>
+            </div>
+            <div class="menu-row">
+              <div class="min-w-0"><strong>Financieros</strong><small class="menu-desc">4 unidades</small></div>
+              <div class="prices"><span class="menu-price" data-precio="financieros"></span></div>
+            </div>
+            <div class="menu-row">
+              <div class="min-w-0"><strong>Madeleine</strong><small class="menu-desc">3 unidades</small></div>
+              <div class="prices"><span class="menu-price" data-precio="madeleine"></span></div>
+            </div>
+            <div class="menu-row">
+              <div class="min-w-0"><strong>Cookies</strong></div>
+              <div class="prices"><span class="menu-price" data-precio="cookies"></span></div>
+            </div>
+            <div class="menu-row">
+              <div class="min-w-0"><strong>Macarons</strong></div>
+              <div class="prices"><span class="menu-price" data-precio="macarons"></span></div>
+            </div>
+            <div class="menu-row">
+              <div class="min-w-0"><strong>Bud&#237;n</strong></div>
+              <div class="prices"><span class="menu-price" data-precio="budin"></span></div>
+            </div>
+            <div class="menu-row">
+              <div class="min-w-0"><strong>Scones</strong><small class="menu-desc">3 unidades</small></div>
+              <div class="prices"><span class="menu-price" data-precio="scones"></span></div>
+            </div>
+            <div class="menu-row">
+              <div class="min-w-0"><strong>Tortita</strong></div>
+              <div class="prices"><span class="menu-price" data-precio="tortita"></span></div>
+            </div>
+            <div class="menu-row">
+              <div class="min-w-0"><strong>Tostado jam&#243;n y queso</strong></div>
+              <div class="prices"><span class="menu-price" data-precio="tostado"></span></div>
+            </div>
+            <div class="menu-row">
+              <div class="min-w-0"><strong>Medialuna</strong><small class="menu-desc-inline">opc. jam&#243;n y queso</small></div>
+              <div class="prices">
+                <span class="menu-price" data-precio="medialuna"></span>
+                <span class="menu-price" data-precio="medialuna_relleno"></span>
+              </div>
+            </div>
+            <div class="menu-row">
+              <div class="min-w-0"><strong>Tost&#243;n con omelette</strong></div>
+              <div class="prices"><span class="menu-price" data-precio="toston"></span></div>
+            </div>
+            <div class="menu-row">
+              <div class="min-w-0"><strong>Bruschetta Tina</strong></div>
+              <div class="prices"><span class="menu-price" data-precio="bruschetta"></span></div>
+            </div>
+            <div class="menu-row">
+              <div class="min-w-0"><strong>Galletas Bret&#243;n</strong><small class="menu-desc">3 unidades</small></div>
+              <div class="prices"><span class="menu-price" data-precio="galletas_breton"></span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══ FOCACCIAS ═══ -->
+      <section id="focaccias" class="menu-section layout-right">
+        <img class="section-icon" src="assets/iconos/icono-focaccias.svg" alt="" loading="lazy">
+        <div class="section-copy">
+          <h2 class="section-title">Focaccias rellenas</h2>
+          <div class="menu-table">
+            <div class="section-bar"></div>
+            <div class="menu-row">
+              <div class="min-w-0"><strong>Serrano</strong><small class="menu-desc">r&#250;cula, jam&#243;n crudo y nueces</small></div>
+              <div class="prices"><span class="menu-price" data-precio="focaccia"></span></div>
+            </div>
+            <div class="menu-row">
+              <div class="min-w-0"><strong>Azul</strong><small class="menu-desc">queso untable, queso roquefort y tomate hidratado</small></div>
+              <div class="prices"><span class="menu-price" data-precio="focaccia"></span></div>
+            </div>
+            <div class="menu-row">
+              <div class="min-w-0"><strong>Gourmet</strong><small class="menu-desc">peras, queso azul, r&#250;cula, nueces y miel</small></div>
+              <div class="prices"><span class="menu-price" data-precio="focaccia"></span></div>
+            </div>
+            <div class="menu-row">
+              <div class="min-w-0"><strong>Capresse</strong><small class="menu-desc">tomate, queso y albahaca</small></div>
+              <div class="prices"><span class="menu-price" data-precio="focaccia"></span></div>
+            </div>
+            <div class="menu-row">
+              <div class="min-w-0"><strong>Tradicional</strong><small class="menu-desc">jam&#243;n, queso, lechuga y tomate</small></div>
+              <div class="prices"><span class="menu-price" data-precio="focaccia"></span></div>
+            </div>
+            <div class="menu-row">
+              <div class="min-w-0"><strong>Fugazza</strong><small class="menu-desc">queso y cebolla caramelizada</small></div>
+              <div class="prices"><span class="menu-price" data-precio="focaccia"></span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══ PASTELERÍA MODERNA ═══ -->
+      <section id="moderna" class="menu-section layout-left modern-section">
+        <img class="section-icon" src="assets/iconos/icono-pasteleria-moderna.svg" alt="" loading="lazy">
+        <div class="section-copy">
+          <h2 class="section-title">Paster&#237;a moderna</h2>
+          <div class="pastry-grid">
+            <div class="pastry-card"><div class="pastry-bg"></div><div class="pastry-circle"><img src="assets/tortas/torta-hawaiana.png" alt="Hawaiana" loading="lazy"></div><div class="pastry-text"><strong class="pastry-item-name">Hawaiana</strong><p class="pastry-desc">mousse de coco y coraz&#243;n de ana&#241;&#225;</p></div><div class="pastry-badge" data-precio="moderna">$7.500</div></div>
+            <div class="pastry-card"><div class="pastry-bg"></div><div class="pastry-circle"><img src="assets/tortas/torta-agus-tina.png" alt="Agus Tina" loading="lazy"></div><div class="pastry-text"><strong class="pastry-item-name">Agus Tina</strong><p class="pastry-desc">mousse de chocolate, centro de naranja, terciopelo de chocolate</p></div><div class="pastry-badge" data-precio="moderna">$7.500</div></div>
+            <div class="pastry-card"><div class="pastry-bg"></div><div class="pastry-circle"><img src="assets/tortas/torta-valen-tina.png" alt="Valen Tina" loading="lazy"></div><div class="pastry-text"><strong class="pastry-item-name">Valen Tina</strong><p class="pastry-desc">profiterol relleno de cheesecake de pistacho, centro de praline de pistacho</p></div><div class="pastry-badge" data-precio="moderna">$7.500</div></div>
+            <div class="pastry-card"><div class="pastry-bg"></div><div class="pastry-circle"><img src="assets/tortas/torta-capricho.png" alt="Capricho" loading="lazy"></div><div class="pastry-text"><strong class="pastry-item-name">Capricho</strong><p class="pastry-desc">cremoso de chocolate, centro de maracuy&#225; y frambuesa, terciopelo de chocolate blanco</p></div><div class="pastry-badge" data-precio="moderna">$7.500</div></div>
+            <div class="pastry-card"><div class="pastry-bg"></div><div class="pastry-circle"><img src="assets/tortas/torta-brownie-boom.png" alt="Brownie boom" loading="lazy"></div><div class="pastry-text"><strong class="pastry-item-name">Brownie boom</strong><p class="pastry-desc">h&#250;medo de chocolate, pasta de man&#237; y dulce de leche, ba&#241;ado en chocolate y crocante de man&#237;</p></div><div class="pastry-badge" data-precio="moderna">$7.500</div></div>
+            <div class="pastry-card"><div class="pastry-bg"></div><div class="pastry-circle"><img src="assets/tortas/torta-banofee.png" alt="Banofee" loading="lazy"></div><div class="pastry-text"><strong class="pastry-item-name">Banofee</strong><p class="pastry-desc">base de chocolate, ganache de man&#237;, bananas caramelizadas, salsa toffee y mousse de chocolate</p></div><div class="pastry-badge" data-precio="moderna">$7.500</div></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══ DESAYUNOS ═══ -->
+      <section id="desayunos" class="breakfast-block">
+        <img src="assets/iconos/icono-desayunos.svg" alt="" loading="lazy">
+        <div class="breakfast-table">
+          <img class="sin-tacc" src="assets/iconos/icono-sin-tacc.svg" alt="Sin TACC">
+          <div class="menu-row">
+            <div class="min-w-0"><strong>Americano</strong><small class="menu-desc">Cafeter&#237;a + jugo exprimido + pan de campo con palta y huevo</small></div>
+            <div class="prices"><span class="menu-price" data-precio="desayuno_americano"></span></div>
+          </div>
+          <div class="menu-row">
+            <div class="min-w-0"><strong>Tentaci&#243;n</strong><small class="menu-desc">Caf&#233; con leche + jugo exprimido + opci&#243;n de paster&#237;a</small></div>
+            <div class="prices"><span class="menu-price" data-precio="desayuno_tentacion"></span></div>
+          </div>
+          <div class="menu-row">
+            <div class="min-w-0"><strong>Criollo</strong><small class="menu-desc">Cafeter&#237;a + jugo exprimido + tostadas con queso, manteca o dulce</small></div>
+            <div class="prices"><span class="menu-price" data-precio="desayuno_criollo"></span></div>
+          </div>
+          <div class="menu-row">
+            <div class="min-w-0"><strong>Alfajor</strong><small class="menu-desc">Cafeter&#237;a + jugo exprimido + alfajor</small></div>
+            <div class="prices"><span class="menu-price" data-precio="desayuno_alfajor"></span></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══ PROMOS ═══ -->
+      <section id="promos" class="promos-panel">
+        <svg class="promo-bubble-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 248.82 95.52">
+          <path d="M243.23,0H5.59C2.5,0,0,2.5,0,5.59v46.97h0v42.97l29.4-23.69h213.83c3.09,0,5.59-2.5,5.59-5.59V5.59c0-3.09-2.5-5.59-5.59-5.59Z" style="fill:#614e4c"/>
+          <text transform="translate(16.62 30)" style="fill:#fffbf4;font-family:AsapCondensed-Medium,'Asap Condensed';font-size:23.82px;font-weight:500;">agrandá tus promos</text>
+          <text transform="translate(16.62 58)" style="fill:#fffbf4;font-family:AsapCondensed-Medium,'Asap Condensed';font-size:23.82px;font-weight:500;">a tazón por <tspan data-precio="promo_tazon_extra">$1.500</tspan></text>
+        </svg>
+        <h2>promos</h2>
+        <div class="promo-grid">
+          <article class="promo-card">
+            <div><h3>Cl&#225;sico</h3><p>Infusi&#243;n cafeter&#237;a + 2 medialunas o tostadas + jugo</p></div>
+            <strong data-precio="promo_clasico"></strong>
+          </article>
+          <article class="promo-card">
+            <div><h3>Minis</h3><p>Chocolatada / Jugo mediano + cookies / sandwich</p></div>
+            <strong data-precio="promo_minis"></strong>
+          </article>
+          <article class="promo-card">
+            <div><h3>Criollo</h3><p>Infusi&#243;n cafeter&#237;a + tostada con manteca o queso y dulce + jugo</p></div>
+            <strong data-precio="promo_criollo"></strong>
+          </article>
+          <article class="promo-card">
+            <div><h3>Alfajor</h3><p>Infusi&#243;n cafeter&#237;a + alfajor a elecci&#243;n + jugo</p></div>
+            <strong data-precio="promo_alfajor"></strong>
+          </article>
+          <article class="promo-card">
+            <div><h3>Tentaci&#243;n</h3><p>Caf&#233; especial + porci&#243;n de torta + jugo</p></div>
+            <strong data-precio="promo_tentacion"></strong>
+          </article>
+          <article class="promo-card">
+            <div><h3>Saludable</h3><p>Infusi&#243;n cafeter&#237;a + yogurt con granola + frutillas y ar&#225;ndanos + jugo</p></div>
+            <strong data-precio="promo_saludable"></strong>
+          </article>
+          <article class="promo-card">
+            <div><h3>Americano</h3><p>Infusi&#243;n cafeter&#237;a + tostada con huevo y palta + jugo</p></div>
+            <strong data-precio="promo_americano"></strong>
+          </article>
+          <article class="promo-card">
+            <div><h3>Stella</h3><p>Cerveza + focaccia a elecci&#243;n</p></div>
+            <strong data-precio="promo_stella"></strong>
+          </article>
+          <article class="promo-card">
+            <div><h3>Carlitos</h3><p>Infusi&#243;n cafeter&#237;a + tostada con jam&#243;n y queso + jugo</p></div>
+            <strong data-precio="promo_carlitos"></strong>
+          </article>
+          <article class="promo-card">
+            <div><h3>Gran Americano</h3><p>Infusi&#243;n cafeter&#237;a + jam&#243;n, queso y huevo + mix de frutas + tostadas + jugo</p></div>
+            <strong data-precio="promo_gran_americano"></strong>
+          </article>
+          <article class="promo-card">
+            <div><h3>Tr&#237;o Macarons</h3><p>T&#233; en hebras / Infusi&#243;n cafeter&#237;a + jugo + tr&#237;o de macarons</p></div>
+            <strong data-precio="promo_trio_macarons"></strong>
+          </article>
+          <div class="promo-share">
+            <div class="promo-tag">para compartir</div>
+            <article class="promo-card">
+              <div><h3>Tina</h3><p>Tetera t&#233; en hebras + 2 porciones bud&#237;n + 2 scones + madeleine + financieros + 2 jugos</p></div>
+              <strong data-precio="promo_tina"></strong>
+            </article>
+          </div>
+          <div class="promo-share">
+            <div class="promo-tag">para compartir</div>
+            <article class="promo-card">
+              <div><h3>Degustaci&#243;n</h3><p>jarra de limonada a elecci&#243;n + degustaci&#243;n de focaccia</p></div>
+              <strong data-precio="promo_degustacion"></strong>
+            </article>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  </div><!-- /page-wrap -->
+
+  <script>
+    // ── Back to top ──
+    const btnTop = document.getElementById('btn-top');
+    window.addEventListener('scroll', () => {
+      btnTop.classList.toggle('visible', window.scrollY > 400);
+    }, {passive: true});
+    btnTop.addEventListener('click', () => window.scrollTo({top: 0, behavior: 'smooth'}));
+
+    // ── Drawer ──
+    const drawer = document.getElementById('nav-drawer');
+    const backdrop = document.getElementById('drawer-backdrop');
+    function openDrawer() {
+      drawer.classList.add('open');
+      backdrop.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeDrawer() {
+      drawer.classList.remove('open');
+      backdrop.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+    document.getElementById('btn-ham').addEventListener('click', openDrawer);
+    document.getElementById('btn-drawer-x').addEventListener('click', closeDrawer);
+    backdrop.addEventListener('click', closeDrawer);
+    document.querySelectorAll('.drawer-links a').forEach(a => a.addEventListener('click', closeDrawer));
+
+    // ── Design Mode ── activar con ?design en la URL
+    if (new URLSearchParams(location.search).has('design')) {
+      document.body.classList.add('design-mode');
+      const hero = document.querySelector('.hero');
+      hero.style.position = 'relative';
+      const targets = ['.hero-bg','.hero-logo','.socials','.story'];
+      targets.forEach(sel => {
+        const el = document.querySelector(sel);
+        if (!el) return;
+        const saved = JSON.parse(localStorage.getItem('dm_'+sel)||'null');
+        if (saved) { el.style.position='absolute'; el.style.top=saved.top; el.style.left=saved.left; }
+        const lbl = document.createElement('div');
+        lbl.className = 'design-label'; lbl.textContent = sel; el.appendChild(lbl);
+        el.addEventListener('mousedown', e => {
+          const r = el.getBoundingClientRect(), pr = hero.getBoundingClientRect();
+          let sx = r.left-pr.left, sy = r.top-pr.top, ox = e.clientX, oy = e.clientY;
+          el.style.position='absolute';
+          const move = m => {
+            el.style.left=(sx+m.clientX-ox)+'px'; el.style.top=(sy+m.clientY-oy)+'px';
+            localStorage.setItem('dm_'+sel,JSON.stringify({top:el.style.top,left:el.style.left}));
+            updatePanel();
+          };
+          const up = ()=>{ removeEventListener('mousemove',move); removeEventListener('mouseup',up); };
+          addEventListener('mousemove',move); addEventListener('mouseup',up); e.preventDefault();
+        });
+      });
+      const panel = document.createElement('div'); panel.id='design-panel';
+      panel.innerHTML='<strong>🎨 Design Mode</strong><pre id="dm-out"></pre>'
+        +'<button onclick="navigator.clipboard.writeText(document.getElementById(\'dm-out\').textContent).then(()=>this.textContent=\'✓ Copiado!\')">📋 Copiar CSS</button>'
+        +'<button onclick="targets.forEach(s=>{localStorage.removeItem(\'dm_\'+s)});location.reload()">↺ Reset</button>';
+      document.body.appendChild(panel);
+      function updatePanel() {
+        document.getElementById('dm-out').textContent = targets.map(sel=>{
+          const el=document.querySelector(sel);
+          return `${sel} { position:absolute; top:${el.style.top||'auto'}; left:${el.style.left||'auto'}; }`;
+        }).join('\n');
+      }
+      updatePanel();
+    }
+  </script>
+  <script src="precios.js"></script>
+</body>
+</html>
