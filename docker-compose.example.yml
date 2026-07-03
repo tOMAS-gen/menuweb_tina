@@ -1,0 +1,11 @@
+# Ejemplo para el servidor donde corre Watchtower. No lo usa el sitio en sí
+# -- es la referencia para copiar a tu docker-compose.yml de infra.
+services:
+  tina-menu:
+    image: ghcr.io/tomas-gen/menuweb_tina:latest
+    container_name: tina_menu
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+    ports:
+      - "3012:80"
+    restart: unless-stopped

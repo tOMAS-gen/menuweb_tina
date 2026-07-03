@@ -40,11 +40,13 @@ Editar la planilla de Google Sheets (una hoja por sector, ID configurado en
 hace falta tocar código. La planilla tiene que seguir compartida como
 "cualquiera con el enlace puede ver": el sitio la lee sin iniciar sesión.
 
-Columnas por hoja: `nombre | descripcion | disponible | precio | precio_2 | imagen`
+Columnas por hoja: `nombre | descripcion | disponible | compartir | precio | precio_2 | imagen`
 (hoja "Café Tradicional": `nombre | disponible | precio_s | precio_m | precio_l | precio_xl`).
 `disponible = no` tacha el precio y muestra "agotado" sin sacar el ítem del
-menú. La hoja "Promos" tiene además, en columnas H/I separadas por una
-columna en blanco, la constante del cartel "agrandá tus promos a tazón".
+menú. `compartir = si` (sólo tiene sentido en la hoja "Promos") le agrega la
+etiqueta "para compartir". La hoja "Promos" tiene además, en columnas H/I
+separadas por una columna en blanco, la constante del cartel "agrandá tus
+promos a tazón".
 
 Si falla la lectura de Google Sheets (sin internet, planilla borrada, etc.),
 el sitio cae a `assets/menu-fallback.json`. Para regenerar ese respaldo (y
@@ -55,3 +57,21 @@ el sitio cae a `assets/menu-fallback.json`. Para regenerar ese respaldo (y
 python3 scripts/build_menu_xlsx.py
 python3 scripts/verify_menu_xlsx.py
 ```
+
+## Despliegue (Docker)
+
+`Dockerfile` sirve el sitio con nginx (no hace falta Node ni build: es HTML
+estático que lee Google Sheets del lado del navegador). En cada push a
+`main`, `.github/workflows/docker-publish.yml` construye la imagen y la
+publica en `ghcr.io/tomas-gen/menuweb_tina:latest`.
+
+Probar la imagen local:
+
+```bash
+docker build -t menuweb-tina .
+docker run --rm -p 8081:80 menuweb-tina
+# abrir http://localhost:8081
+```
+
+En el servidor (Watchtower detecta la imagen nueva sola), ver
+`docker-compose.example.yml` — la URL prevista es `tina.menuweb.ar`.
